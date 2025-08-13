@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>get what u pay for | free tools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --accent: #00a8ff;
+            --success: #00ff41;
+            --warning: #ffbb33;
+            --danger: #ff3838;
+            --bg: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-tertiary: #1a1a1a;
+            --text: #e4e4e4;
+            --text-secondary: #888888;
+            --border: #2a2a2a;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--text-secondary);
+            font-weight: 400;
+            font-size: 0.875rem;
+            margin-left: 0.5rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s;
+            font-weight: 600;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: var(--text);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text);
+            transform: skewX(-10deg);
+            display: inline-block;
+            letter-spacing: -1px;
+        }
+
+        .hero-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--success);
+            margin: 1.5rem 0;
+            text-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+        }
+
+        /* Legal Notice */
+        .legal-notice {
+            background: var(--bg-secondary);
+            border-left: 3px solid var(--warning);
+            padding: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .legal-title {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 1px;
+            color: var(--warning);
+        }
+
+        .legal-text {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.7;
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .tool-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .tool-card:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--accent);
+            transform: translateX(5px);
+        }
+
+        .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tool-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .tool-status {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        .tool-status.beta {
+            background: var(--warning);
+            box-shadow: 0 0 8px var(--warning);
+        }
+
+        .tool-status.dev {
+            background: var(--text-secondary);
+            box-shadow: none;
+        }
+
+        .tool-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .tool-tech {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .tech-badge {
+            padding: 0.25rem 0.5rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .tool-expand {
+            color: var(--text-secondary);
+            transition: transform 0.2s;
+            margin-left: 0.5rem;
+            font-weight: 700;
+        }
+
+        .tool-card.expanded .tool-expand {
+            transform: rotate(90deg);
+        }
+
+        .tool-details {
+            display: none;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .tool-card.expanded .tool-details {
+            display: block;
+        }
+
+        .tool-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tool-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            font-family: inherit;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .btn.primary {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+
+        .btn.primary:hover {
+            background: transparent;
+            color: var(--accent);
+        }
+
+        .btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .btn:disabled:hover {
+            border-color: var(--border);
+            color: var(--text);
+        }
+
+        /* Recommendations */
+        .rec-section {
+            margin-top: 4rem;
+        }
+
+        .rec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .rec-category {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+        }
+
+        .rec-title {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .rec-item {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .rec-item:last-child {
+            border-bottom: none;
+        }
+
+        .rec-name {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.25rem;
+            color: var(--text);
+        }
+
+        .rec-desc {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* About */
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-section {
+            margin-bottom: 3rem;
+        }
+
+        .about-section h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .about-section p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .about-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .about-list li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            margin-top: 6rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Page sections */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .rec-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-badge {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="#" class="logo">gwupf <span>tools</span></a>
+            <nav class="nav">
+                <a href="#" onclick="showPage('tools')" class="nav-link active">Tools</a>
+                <a href="#" onclick="showPage('recs')" class="nav-link">Recommendations</a>
+                <a href="#" onclick="showPage('about')" class="nav-link">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Tools Page -->
+        <div id="tools-page" class="page-section active">
+            <div class="hero">
+                <h1>get what u pay for</h1>
+                <p class="hero-subtitle">Free tools that actually work</p>
+                <div class="price">$0</div>
+            </div>
+
+            <div class="legal-notice">
+                <div class="legal-title">Disclaimer</div>
+                <div class="legal-text">
+                    These tools are provided AS IS without warranty of any kind. Use at your own risk. 
+                    I am not liable for any damages, losses, or consequences from using these tools. 
+                    By using them, you accept full responsibility for the outcomes. 
+                    No support is provided. If something breaks, you get to keep both pieces.
+                </div>
+            </div>
+
+            <div class="tools-grid">
+                <div class="tool-card" onclick="toggleTool(this)">
+                    <div class="tool-header">
+                        <div class="tool-info">
+                            <div class="tool-status"></div>
+                            <span class="tool-name">Budget Tracker</span>
+                        </div>
+                        <div class="tool-tech">
+                            <span class="tech-badge">Python</span>
+                            <span class="tech-badge">Pandas</span>
+                            <span class="tool-expand">→</span>
+                        </div>
+                    </div>
+                    <div class="tool-details">
+                        <p class="tool-description">
+                            Personal finance tracking with automated categorization and reporting. 
+                            Imports from CSV, generates monthly summaries, and identifies spending patterns.
+                        </p>
+                        <div class="tool-actions">
+                            <button class="btn primary">Launch</button>
+                            <button class="btn">Documentation</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tool-card" onclick="toggleTool(this)">
+                    <div class="tool-header">
+                        <div class="tool-info">
+                            <div class="tool-status"></div>
+                            <span class="tool-name">Audit Automation Suite</span>
+                        </div>
+                        <div class="tool-tech">
+                            <span class="tech-badge">Python</span>
+                            <span class="tech-badge">Excel</span>
+                            <span class="tool-expand">→</span>
+                        </div>
+                    </div>
+                    <div class="tool-details">
+                        <p class="tool-description">
+                            Automates common audit procedures including sampling, testing, and documentation. 
+                            Reduces manual work by approximately 70%. Built by a CPA for CPAs.
+                        </p>
+                        <div class="tool-actions">
+                            <button class="btn primary">Launch</button>
+                            <button class="btn">Documentation</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tool-card" onclick="toggleTool(this)">
+                    <div class="tool-header">
+                        <div class="tool-info">
+                            <div class="tool-status beta"></div>
+                            <span class="tool-name">Invoice Generator</span>
+                        </div>
+                        <div class="tool-tech">
+                            <span class="tech-badge">React</span>
+                            <span class="tech-badge">PDF</span>
+                            <span class="tool-expand">→</span>
+                        </div>
+                    </div>
+                    <div class="tool-details">
+                        <p class="tool-description">
+                            Clean, professional invoice generation with customizable templates. 
+                            Exports to PDF, tracks payment status, and maintains client database.
+                        </p>
+                        <div class="tool-actions">
+                            <button class="btn primary">Launch</button>
+                            <button class="btn">Documentation</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tool-card" onclick="toggleTool(this)">
+                    <div class="tool-header">
+                        <div class="tool-info">
+                            <div class="tool-status"></div>
+                            <span class="tool-name">GL Analysis Tool</span>
+                        </div>
+                        <div class="tool-tech">
+                            <span class="tech-badge">Python</span>
+                            <span class="tech-badge">SQL</span>
+                            <span class="tool-expand">→</span>
+                        </div>
+                    </div>
+                    <div class="tool-details">
+                        <p class="tool-description">
+                            General ledger analysis with anomaly detection, duplicate identification, 
+                            and automated reconciliation. Handles large datasets efficiently.
+                        </p>
+                        <div class="tool-actions">
+                            <button class="btn primary">Launch</button>
+                            <button class="btn">Documentation</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tool-card" onclick="toggleTool(this)">
+                    <div class="tool-header">
+                        <div class="tool-info">
+                            <div class="tool-status dev"></div>
+                            <span class="tool-name">Document Parser</span>
+                        </div>
+                        <div class="tool-tech">
+                            <span class="tech-badge">OCR</span>
+                            <span class="tech-badge">AI</span>
+                            <span class="tool-expand">→</span>
+                        </div>
+                    </div>
+                    <div class="tool-details">
+                        <p class="tool-description">
+                            Extracts structured data from PDFs and scanned documents. 
+                            Currently in development. Expected completion Q2 2024.
+                        </p>
+                        <div class="tool-actions">
+                            <button class="btn" disabled>Coming Soon</button>
+                            <button class="btn">Updates</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations Page -->
+        <div id="recs-page" class="page-section">
+            <div class="hero">
+                <h1>Recommendations</h1>
+                <p class="hero-subtitle">Things worth your time</p>
+            </div>
+
+            <div class="rec-grid">
+                <div class="rec-category">
+                    <h3 class="rec-title">Tools & Software</h3>
+                    <div class="rec-item">
+                        <span class="rec-name">Obsidian</span>
+                        <span class="rec-desc">Local note-taking that respects your data</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">Linear</span>
+                        <span class="rec-desc">Issue tracking done right</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">Raycast</span>
+                        <span class="rec-desc">Mac productivity on steroids</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">TablePlus</span>
+                        <span class="rec-desc">Database management that doesn't suck</span>
+                    </div>
+                </div>
+
+                <div class="rec-category">
+                    <h3 class="rec-title">Books</h3>
+                    <div class="rec-item">
+                        <span class="rec-name">The Pragmatic Programmer</span>
+                        <span class="rec-desc">Timeless advice for developers</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">Designing Data-Intensive Applications</span>
+                        <span class="rec-desc">Kleppmann. Essential reading.</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">Site Reliability Engineering</span>
+                        <span class="rec-desc">How Google does it</span>
+                    </div>
+                </div>
+
+                <div class="rec-category">
+                    <h3 class="rec-title">Hardware</h3>
+                    <div class="rec-item">
+                        <span class="rec-name">Keychron Q1</span>
+                        <span class="rec-desc">Mechanical keyboard perfection</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">Herman Miller Aeron</span>
+                        <span class="rec-desc">Worth every penny</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">LG 27" 4K</span>
+                        <span class="rec-desc">Best monitor under $500</span>
+                    </div>
+                </div>
+
+                <div class="rec-category">
+                    <h3 class="rec-title">Services</h3>
+                    <div class="rec-item">
+                        <span class="rec-name">Fastmail</span>
+                        <span class="rec-desc">Email without the surveillance</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">Mullvad VPN</span>
+                        <span class="rec-desc">Privacy-first, no BS</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">Backblaze</span>
+                        <span class="rec-desc">Backup that just works</span>
+                    </div>
+                </div>
+
+                <div class="rec-category">
+                    <h3 class="rec-title">Food & Coffee</h3>
+                    <div class="rec-item">
+                        <span class="rec-name">Local Coffee Roaster</span>
+                        <span class="rec-desc">Find one. Support them.</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">AeroPress</span>
+                        <span class="rec-desc">Simple. Reliable. Good coffee.</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">Cast Iron Pan</span>
+                        <span class="rec-desc">One pan. Lifetime warranty.</span>
+                    </div>
+                </div>
+
+                <div class="rec-category">
+                    <h3 class="rec-title">Avoid</h3>
+                    <div class="rec-item">
+                        <span class="rec-name">Subscription Everything</span>
+                        <span class="rec-desc">Own your tools when possible</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">Smart Home Devices</span>
+                        <span class="rec-desc">Your lightbulb doesn't need internet</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">Productivity Gurus</span>
+                        <span class="rec-desc">Just do the work</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Page -->
+        <div id="about-page" class="page-section">
+            <div class="about-content">
+                <div class="about-section">
+                    <h2>About</h2>
+                    <p>
+                        Free tools built for personal use and shared with anyone who finds them useful. 
+                        No ads, no tracking, no premium tiers. Just tools that solve real problems.
+                    </p>
+                    <p>
+                        Built by a CPA who codes. Everything runs directly on this site.
+                    </p>
+                </div>
+
+                <div class="about-section">
+                    <h2>Philosophy</h2>
+                    <p>
+                        Good software doesn't need to be expensive or complicated. These tools do one thing well 
+                        and get out of your way. They're worth exactly what you pay for them - nothing - 
+                        but hopefully save you time worth much more.
+                    </p>
+                </div>
+
+                <div class="about-section">
+                    <h2>Support</h2>
+                    <p>
+                        There is no support. If something's broken, refresh and try again. 
+                        If you need help, check the documentation.
+                    </p>
+                </div>
+
+                <div class="about-section">
+                    <h2>Contact</h2>
+                    <p>
+                        You probably can't.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>© 2024 get what u pay for · No warranty expressed or implied</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleTool(element) {
+            document.querySelectorAll('.tool-card').forEach(card => {
+                if (card !== element) {
+                    card.classList.remove('expanded');
+                }
+            });
+            element.classList.toggle('expanded');
+        }
+
+        function showPage(page) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(page + '-page').classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
