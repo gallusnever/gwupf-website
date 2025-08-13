@@ -100,61 +100,9 @@
             font-weight: 700;
             margin-bottom: 1rem;
             color: var(--text);
+            transform: skewX(-10deg);
             display: inline-block;
             letter-spacing: -1px;
-            position: relative;
-        }
-
-        /* Glitch effect */
-        .glitch {
-            position: relative;
-            animation: glitch-skew 4s infinite;
-        }
-
-        .glitch::before,
-        .glitch::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .glitch::before {
-            animation: glitch-1 0.5s infinite;
-            color: var(--accent);
-            z-index: -1;
-        }
-
-        .glitch::after {
-            animation: glitch-2 0.5s infinite;
-            color: var(--success);
-            z-index: -2;
-        }
-
-        @keyframes glitch-skew {
-            0%, 100% { transform: skew(0deg); }
-            20% { transform: skew(-2deg); }
-            40% { transform: skew(1deg); }
-            60% { transform: skew(-1deg); }
-            80% { transform: skew(2deg); }
-        }
-
-        @keyframes glitch-1 {
-            0%, 100% { clip-path: inset(0 0 0 0); }
-            20% { clip-path: inset(20% 0 60% 0); transform: translate(-2px, 2px); }
-            40% { clip-path: inset(50% 0 30% 0); transform: translate(2px, -2px); }
-            60% { clip-path: inset(80% 0 10% 0); transform: translate(-1px, 1px); }
-            80% { clip-path: inset(10% 0 80% 0); transform: translate(1px, -1px); }
-        }
-
-        @keyframes glitch-2 {
-            0%, 100% { clip-path: inset(0 0 0 0); }
-            20% { clip-path: inset(80% 0 10% 0); transform: translate(2px, -1px); }
-            40% { clip-path: inset(10% 0 80% 0); transform: translate(-2px, 1px); }
-            60% { clip-path: inset(50% 0 30% 0); transform: translate(1px, -2px); }
-            80% { clip-path: inset(30% 0 50% 0); transform: translate(-1px, 2px); }
         }
 
         .hero-subtitle {
@@ -162,6 +110,14 @@
             font-size: 1rem;
             margin-bottom: 0.5rem;
             font-weight: 600;
+        }
+
+        .price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--success);
+            margin: 1.5rem 0;
+            text-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
         }
 
         /* Legal Notice */
@@ -379,16 +335,6 @@
             font-size: 0.875rem;
         }
 
-        .rec-link {
-            color: var(--accent);
-            text-decoration: none;
-            font-size: 0.8rem;
-        }
-
-        .rec-link:hover {
-            text-decoration: underline;
-        }
-
         /* About */
         .about-content {
             max-width: 800px;
@@ -479,8 +425,9 @@
         <!-- Tools Page -->
         <div id="tools-page" class="page-section active">
             <div class="hero">
-                <h1 class="glitch" data-text="get what u pay for">get what u pay for</h1>
-                <p class="hero-subtitle">Tools that are hopefully useful. If they're not, please remember I genuinely appreciate feedback, it's how I identify who to ignore next.</p>
+                <h1>get what u pay for</h1>
+                <p class="hero-subtitle">Free tools that actually work</p>
+                <div class="price">$0</div>
             </div>
 
             <div class="legal-notice">
@@ -494,6 +441,30 @@
             </div>
 
             <div class="tools-grid">
+                <div class="tool-card" onclick="toggleTool(this)">
+                    <div class="tool-header">
+                        <div class="tool-info">
+                            <div class="tool-status"></div>
+                            <span class="tool-name">Budget Tracker</span>
+                        </div>
+                        <div class="tool-tech">
+                            <span class="tech-badge">Python</span>
+                            <span class="tech-badge">Pandas</span>
+                            <span class="tool-expand">→</span>
+                        </div>
+                    </div>
+                    <div class="tool-details">
+                        <p class="tool-description">
+                            Personal finance tracking with automated categorization and reporting. 
+                            Imports from CSV, generates monthly summaries, and identifies spending patterns.
+                        </p>
+                        <div class="tool-actions">
+                            <button class="btn primary">Launch</button>
+                            <button class="btn">Documentation</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="tool-card" onclick="toggleTool(this)">
                     <div class="tool-header">
                         <div class="tool-info">
@@ -517,6 +488,78 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="tool-card" onclick="toggleTool(this)">
+                    <div class="tool-header">
+                        <div class="tool-info">
+                            <div class="tool-status beta"></div>
+                            <span class="tool-name">Invoice Generator</span>
+                        </div>
+                        <div class="tool-tech">
+                            <span class="tech-badge">React</span>
+                            <span class="tech-badge">PDF</span>
+                            <span class="tool-expand">→</span>
+                        </div>
+                    </div>
+                    <div class="tool-details">
+                        <p class="tool-description">
+                            Clean, professional invoice generation with customizable templates. 
+                            Exports to PDF, tracks payment status, and maintains client database.
+                        </p>
+                        <div class="tool-actions">
+                            <button class="btn primary">Launch</button>
+                            <button class="btn">Documentation</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tool-card" onclick="toggleTool(this)">
+                    <div class="tool-header">
+                        <div class="tool-info">
+                            <div class="tool-status"></div>
+                            <span class="tool-name">GL Analysis Tool</span>
+                        </div>
+                        <div class="tool-tech">
+                            <span class="tech-badge">Python</span>
+                            <span class="tech-badge">SQL</span>
+                            <span class="tool-expand">→</span>
+                        </div>
+                    </div>
+                    <div class="tool-details">
+                        <p class="tool-description">
+                            General ledger analysis with anomaly detection, duplicate identification, 
+                            and automated reconciliation. Handles large datasets efficiently.
+                        </p>
+                        <div class="tool-actions">
+                            <button class="btn primary">Launch</button>
+                            <button class="btn">Documentation</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tool-card" onclick="toggleTool(this)">
+                    <div class="tool-header">
+                        <div class="tool-info">
+                            <div class="tool-status dev"></div>
+                            <span class="tool-name">Document Parser</span>
+                        </div>
+                        <div class="tool-tech">
+                            <span class="tech-badge">OCR</span>
+                            <span class="tech-badge">AI</span>
+                            <span class="tool-expand">→</span>
+                        </div>
+                    </div>
+                    <div class="tool-details">
+                        <p class="tool-description">
+                            Extracts structured data from PDFs and scanned documents. 
+                            Currently in development. Expected completion Q2 2024.
+                        </p>
+                        <div class="tool-actions">
+                            <button class="btn" disabled>Coming Soon</button>
+                            <button class="btn">Updates</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -529,45 +572,86 @@
 
             <div class="rec-grid">
                 <div class="rec-category">
-                    <h3 class="rec-title">Food</h3>
+                    <h3 class="rec-title">Tools & Software</h3>
                     <div class="rec-item">
-                        <span class="rec-name">The Tropical (Thai) - Tulsa</span>
-                        <span class="rec-desc">Either the pad thai or the red curry</span>
+                        <span class="rec-name">Obsidian</span>
+                        <span class="rec-desc">Local note-taking that respects your data</span>
                     </div>
                     <div class="rec-item">
-                        <span class="rec-name">Leon's Smoke Shack BBQ - Tulsa</span>
+                        <span class="rec-name">Linear</span>
+                        <span class="rec-desc">Issue tracking done right</span>
                     </div>
                     <div class="rec-item">
-                        <span class="rec-name">Rendang Indonesian - Tulsa</span>
-                        <span class="rec-desc">Get the coffee too</span>
+                        <span class="rec-name">Raycast</span>
+                        <span class="rec-desc">Mac productivity on steroids</span>
                     </div>
                     <div class="rec-item">
-                        <span class="rec-name">Shout and Sack - Vinita</span>
-                        <span class="rec-desc">the gas station</span>
-                    </div>
-                    <div class="rec-item">
-                        <span class="rec-name">Cove Club - Langley, OK</span>
+                        <span class="rec-name">TablePlus</span>
+                        <span class="rec-desc">Database management that doesn't suck</span>
                     </div>
                 </div>
 
                 <div class="rec-category">
-                    <h3 class="rec-title">Gear</h3>
+                    <h3 class="rec-title">Books</h3>
                     <div class="rec-item">
-                        <span class="rec-name">Logitech Master MX 3S (mouse)</span>
-                        <span class="rec-desc">trust me</span>
-                        <a href="https://www.amazon.com/Logitech-Wireless-Ultra-fast-Scrolling-Bluetooth/dp/B09HM94VDS" target="_blank" class="rec-link">[link]</a>
+                        <span class="rec-name">The Pragmatic Programmer</span>
+                        <span class="rec-desc">Timeless advice for developers</span>
                     </div>
                     <div class="rec-item">
-                        <span class="rec-name">Good Computer with Good Screen</span>
+                        <span class="rec-name">Designing Data-Intensive Applications</span>
+                        <span class="rec-desc">Kleppmann. Essential reading.</span>
                     </div>
                     <div class="rec-item">
-                        <span class="rec-name">Barrel Smoker</span>
-                        <span class="rec-desc">Build one yourself or get an Oklahoma Joe Bronco</span>
-                        <a href="https://www.amazon.com/Oklahoma-Joes-19202100-Bronco-Smoker/dp/B07JZ78TV3" target="_blank" class="rec-link">[link]</a>
+                        <span class="rec-name">Site Reliability Engineering</span>
+                        <span class="rec-desc">How Google does it</span>
+                    </div>
+                </div>
+
+                <div class="rec-category">
+                    <h3 class="rec-title">Hardware</h3>
+                    <div class="rec-item">
+                        <span class="rec-name">Keychron Q1</span>
+                        <span class="rec-desc">Mechanical keyboard perfection</span>
                     </div>
                     <div class="rec-item">
-                        <span class="rec-name">B&B Charcoal</span>
-                        <span class="rec-desc">No one wants a burger cooked with lighter fluid soaked sawdust and rocks glued together</span>
+                        <span class="rec-name">Herman Miller Aeron</span>
+                        <span class="rec-desc">Worth every penny</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">LG 27" 4K</span>
+                        <span class="rec-desc">Best monitor under $500</span>
+                    </div>
+                </div>
+
+                <div class="rec-category">
+                    <h3 class="rec-title">Services</h3>
+                    <div class="rec-item">
+                        <span class="rec-name">Fastmail</span>
+                        <span class="rec-desc">Email without the surveillance</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">Mullvad VPN</span>
+                        <span class="rec-desc">Privacy-first, no BS</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">Backblaze</span>
+                        <span class="rec-desc">Backup that just works</span>
+                    </div>
+                </div>
+
+                <div class="rec-category">
+                    <h3 class="rec-title">Food & Coffee</h3>
+                    <div class="rec-item">
+                        <span class="rec-name">Local Coffee Roaster</span>
+                        <span class="rec-desc">Find one. Support them.</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">AeroPress</span>
+                        <span class="rec-desc">Simple. Reliable. Good coffee.</span>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-name">Cast Iron Pan</span>
+                        <span class="rec-desc">One pan. Lifetime warranty.</span>
                     </div>
                 </div>
 
@@ -578,17 +662,12 @@
                         <span class="rec-desc">Own your tools when possible</span>
                     </div>
                     <div class="rec-item">
+                        <span class="rec-name">Smart Home Devices</span>
+                        <span class="rec-desc">Your lightbulb doesn't need internet</span>
+                    </div>
+                    <div class="rec-item">
                         <span class="rec-name">Productivity Gurus</span>
                         <span class="rec-desc">Just do the work</span>
-                    </div>
-                </div>
-
-                <div class="rec-category">
-                    <h3 class="rec-title">Misc</h3>
-                    <div class="rec-item">
-                        <span class="rec-name">66 Apparel - Vinita, OK</span>
-                        <span class="rec-desc">for any customized apparel you could need</span>
-                        <a href="https://66apparel.com" target="_blank" class="rec-link">[link]</a>
                     </div>
                 </div>
             </div>
@@ -600,21 +679,35 @@
                 <div class="about-section">
                     <h2>About</h2>
                     <p>
-                        Sharing tools I randomly build, that's pretty much it.
+                        Free tools built for personal use and shared with anyone who finds them useful. 
+                        No ads, no tracking, no premium tiers. Just tools that solve real problems.
+                    </p>
+                    <p>
+                        Built by a CPA who codes. Everything runs directly on this site.
+                    </p>
+                </div>
+
+                <div class="about-section">
+                    <h2>Philosophy</h2>
+                    <p>
+                        Good software doesn't need to be expensive or complicated. These tools do one thing well 
+                        and get out of your way. They're worth exactly what you pay for them - nothing - 
+                        but hopefully save you time worth much more.
                     </p>
                 </div>
 
                 <div class="about-section">
                     <h2>Support</h2>
                     <p>
-                        There is no support.
+                        There is no support. If something's broken, refresh and try again. 
+                        If you need help, check the documentation.
                     </p>
                 </div>
 
                 <div class="about-section">
                     <h2>Contact</h2>
                     <p>
-                        Intentionally blank.
+                        You probably can't.
                     </p>
                 </div>
             </div>
