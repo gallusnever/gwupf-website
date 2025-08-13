@@ -57,11 +57,14 @@
             text-decoration: none;
         }
 
-        .logo span {
+        .logo .home-icon {
             color: var(--text-secondary);
             font-weight: 400;
-            font-size: 0.875rem;
+            font-size: 1rem;
             margin-left: 0.5rem;
+            font-family: 'Courier New', monospace;
+            display: inline-block;
+            vertical-align: middle;
         }
 
         .nav {
@@ -466,7 +469,7 @@
 <body>
     <header>
         <div class="header-content">
-            <a href="#" class="logo">gwupf <span>tools</span></a>
+            <a href="#" class="logo">gwupf <span class="home-icon">/\\</span></a>
             <nav class="nav">
                 <a href="#" onclick="showPage('tools')" class="nav-link active">Tools</a>
                 <a href="#" onclick="showPage('recs')" class="nav-link">Recommendations</a>
