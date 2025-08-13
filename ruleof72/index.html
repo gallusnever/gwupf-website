@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Rule of 72 Lab | GWUPF</title>
+<style>
+  :root{
+    --accent: #00a8ff;
+    --success: #00ff41;
+    --warning: #ffbb33;
+    --danger: #ff3838;
+    --bg: #0a0a0a;
+    --bg-secondary: #141414;
+    --bg-tertiary: #1a1a1a;
+    --text: #e4e4e4;
+    --text-secondary: #888888;
+    --border: #2a2a2a;
+    /* Aliases for existing code */
+    --panel: var(--bg-secondary);
+    --panel-2: var(--bg-tertiary);
+    --ink: var(--text);
+    --ink-2: var(--text-secondary);
+    --grid: var(--border);
+    --warn: var(--warning);
+    --bad: var(--danger);
+    --good: var(--success);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 'Courier New', Courier, monospace}
+  .wrap{max-width:1100px;margin:0 auto;padding:20px}
+  header{display:block;margin-bottom:8px}
+  .title{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+  h1{font-size:22px;margin:0;letter-spacing:.08em}
+  .sub{color:var(--ink-2);font-size:12px;margin-top:2px}
+  /* Prominent mode bar just below the title */
+  .modebar{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 14px; padding:10px;
+           background:var(--panel); border:1px solid var(--grid); border-radius:12px}
+  .mode{border:1px solid var(--grid);background:var(--panel-2);color:var(--ink);padding:10px 14px;border-radius:10px;cursor:pointer;
+        font-weight:700; letter-spacing:.02em}
+  .mode.active{background:var(--accent);border-color:var(--accent);color:#0b0b0f}
+  .mode.debt.active{background:var(--bad);border-color:var(--bad)}
+  .mode.inflation.active{background:var(--warn);border-color:var(--warn)}
+  .mode.arbitrage.active{background:#c6b6ff;border-color:#c6b6ff}
+  .panel{background:var(--panel);border:1px solid var(--grid);border-radius:14px;padding:14px}
+  .grid{display:grid;gap:12px}
+  .inputs{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));align-items:end}
+  label{display:block;color:var(--ink-2);font-size:12px;margin:0 0 4px 2px}
+  input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--grid);background:var(--panel-2);color:var(--ink)}
+  input:focus{outline:none;border-color:var(--accent)}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{border:1px solid var(--grid);background:var(--panel-2);color:var(--ink);padding:10px 12px;border-radius:10px;cursor:pointer}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#0b0b0f;font-weight:700}
+  .btn:hover{filter:brightness(1.08)}
+  .stats{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--grid);border-radius:12px;padding:14px}
+  .stat{font-size:18px;font-weight:800}
+  .muted{color:var(--ink-2);font-size:12px}
+  .good{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)} .accent{color:var(--accent)}
+  .chartBox{padding:10px}
+  svg{width:100%;height:280px;display:block}
+  .kpi{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  pre{white-space:pre;overflow:auto;background:var(--panel);border:1px solid var(--grid);border-radius:12px;padding:12px;margin:0}
+  .insight{margin-top:14px}
+  .list{margin:4px 0 0 18px;padding:0}
+  .list li{margin:4px 0;color:var(--ink-2)}
+  .list li b{color:var(--ink)}
+  footer{margin-top:16px;color:var(--ink-2);font-size:12px}
+  @media (max-width: 768px) { header { flex-direction: column !important; gap: 1rem; } }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <div>
+        <div class="title">
+          <h1>THE RULE OF 72 — LAB</h1>
+        </div>
+        <div class="sub">Rule of 72: years to double ≈ <b>72 ÷ annual rate (%)</b>. Popularized by <b>Luca Pacioli</b> in 1494 (Summa de arithmetica).</div>
+        <div id="modeNote" class="sub"></div>
+      </div>
+      <a href="../" style="color: var(--text-secondary); text-decoration: none; font-weight: 600; padding: 10px 20px; border: 1px solid var(--border); transition: all 0.2s ease; white-space: nowrap; margin-left: 20px;">← Home</a>
+    </header>
+    
+    <!-- Disclaimer -->
+    <div style="background: rgba(255, 56, 56, 0.1); border: 1px solid var(--danger); border-left: 3px solid var(--danger); padding: 12px 20px; margin-bottom: 1rem; font-size: 0.85rem; color: var(--text-secondary); text-align: center;">
+      <strong style="color: var(--danger); text-transform: uppercase; letter-spacing: 0.5px; margin-right: 8px;">Disclaimer:</strong> This tool is provided AS IS without warranty. The creator assumes no liability for any damages or losses from its use. Users accept full responsibility for all outcomes. Not a substitute for professional financial advice.
+    </div>
+
+    <nav class="modebar" aria-label="Modes">
+      <button class="mode active" data-mode="wealth">▲ Wealth</button>
+      <button class="mode" data-mode="debt">▼ Debt</button>
+      <button class="mode" data-mode="inflation">◆ Inflation</button>
+      <button class="mode" data-mode="arbitrage">⚡ Arbitrage</button>
+    </nav>
+
+    <section class="panel grid inputs" id="inputs">
+      <div>
+        <label id="l1">Starting Age</label>
+        <input id="v1" type="number" value="21" min="0" step="1"/>
+      </div>
+      <div>
+        <label id="l2">Initial Investment ($)</label>
+        <input id="v2" type="number" value="10000" min="0" step="100"/>
+      </div>
+      <div>
+        <label id="l3">Monthly Contribution ($)</label>
+        <input id="v3" type="number" value="500" min="0" step="10"/>
+      </div>
+      <div>
+        <label id="l4">Annual Return (%)</label>
+        <input id="v4" type="number" value="7.2" min="0" step="0.1"/>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="calc">Calculate →</button>
+        <button class="btn" id="copy">Copy Link</button>
+        <button class="btn" id="reset">Reset</button>
+      </div>
+    </section>
+
+    <section class="grid stats" id="stats">
+      <div class="card"><div class="stat accent" id="s1v">—</div><div class="muted" id="s1l">Years to Double (72 vs exact)</div></div>
+      <div class="card"><div class="stat" id="s2v">—</div><div class="muted" id="s2l">Milestone</div></div>
+      <div class="card"><div class="stat" id="s3v">—</div><div class="muted" id="s3l">—</div></div>
+      <div class="card"><div class="stat" id="s4v">—</div><div class="muted" id="s4l">—</div></div>
+    </section>
+
+    <section class="panel chartBox">
+      <div class="kpi">
+        <h3 id="chartTitle" style="margin:0">Exponential Curve</h3>
+        <span class="muted" id="chartHint">SVG line with ASCII fallback</span>
+      </div>
+      <svg id="chart" role="img" aria-label="chart"></svg>
+      <pre id="ascii" style="margin-top:8px"></pre>
+    </section>
+
+    <section class="panel">
+      <h3 id="barsTitle" style="margin:0 0 6px 0">Timeline</h3>
+      <ul id="barsList" class="list"></ul>
+      <div class="insight" id="insight"></div>
+    </section>
+
+    <footer>
+      Educational demo only — not financial advice. Uses the mental‑math Rule of 72 and exact ln math under the hood.
+    </footer>
+  </div>
+
+<script>
+(function(){
+  const $ = s=>document.querySelector(s);
+  const $$ = s=>document.querySelectorAll(s);
+
+  const MODES = {
+    wealth: {
+      labels:["Starting Age","Initial Investment ($)","Monthly Contribution ($)","Annual Return (%)"],
+      defaults:[21,10000,500,7.2]
+    },
+    debt: {
+      labels:["Current Age","Balance ($)","Monthly Payment ($)","APR (%)"],
+      defaults:[30,10000,200,18.9]
+    },
+    inflation: {
+      labels:["Years to Track","Starting Amount ($ today)","Annual Savings ($ nominal)","Inflation Rate (%)"],
+      defaults:[30,100000,0,3.5]
+    },
+    arbitrage: {
+      labels:["Loan Term (years)","Loan Amount ($)","Interest Rate (%)","Inflation Rate (%)"],
+      defaults:[30,500000,3.5,5.5]
+    }
+  };
+
+  let mode = 'wealth';
+
+  // Utils
+  const clamp = (x,min,max)=>Math.min(max,Math.max(min,x));
+  const fmtMoney = n=> {
+    if (!isFinite(n)) return '—';
+    const abs=Math.abs(n);
+    if(abs>=1e9) return (n/1e9).toFixed(2)+'B';
+    if(abs>=1e6) return (n/1e6).toFixed(2)+'M';
+    if(abs>=1e3) return '$'+Math.round(n).toLocaleString();
+    return '$'+(Math.round(n*100)/100).toLocaleString();
+  }
+  const exactDoubling = r => r>0? Math.log(2)/Math.log(1+r) : Infinity;
+  const r12 = r => Math.pow(1+r,1/12)-1; // convert annual -> monthly effective
+
+  // URL state
+  function pushURL(){
+    const params = new URLSearchParams();
+    params.set('m',mode);
+    params.set('v1',$('#v1').value);
+    params.set('v2',$('#v2').value);
+    params.set('v3',$('#v3').value);
+    params.set('v4',$('#v4').value);
+    history.replaceState(null,'','?'+params.toString());
+  }
+  function restoreURL(){
+    const qs = new URLSearchParams(location.search);
+    if(qs.get('m') && MODES[qs.get('m')]) mode = qs.get('m');
+    setMode(mode, false);
+    ['v1','v2','v3','v4'].forEach((id,i)=>{
+      const v = qs.get('v'+(i+1)); if(v!==null) $('#'+id).value = v;
+    });
+  }
+
+  // Mode switching
+  function setMode(m, reset=true){
+    mode = m;
+    $$('.mode').forEach(b=>{b.classList.toggle('active', b.dataset.mode===m); b.classList.toggle('debt', m==='debt'); b.classList.toggle('inflation', m==='inflation'); b.classList.toggle('arbitrage', m==='arbitrage');});
+    const L = MODES[m].labels, D = MODES[m].defaults;
+    $('#l1').textContent=L[0]; $('#l2').textContent=L[1]; $('#l3').textContent=L[2]; $('#l4').textContent=L[3];
+    if(reset){ $('#v1').value=D[0]; $('#v2').value=D[1]; $('#v3').value=D[2]; $('#v4').value=D[3]; }
+
+    // Titles per mode
+    if(m==='wealth'){ $('#chartTitle').textContent='Exponential Growth'; $('#barsTitle').textContent='Wealth Timeline'; $('#s3l').textContent='Value at Age 65'; $('#s4l').textContent='Total Contributed'; }
+    if(m==='debt'){ $('#chartTitle').textContent='Debt Snowball'; $('#barsTitle').textContent='Debt Timeline'; $('#s3l').textContent='Total Amount Paid'; $('#s4l').textContent='Interest Paid'; }
+    if(m==='inflation'){ $('#chartTitle').textContent='Purchasing Power Erosion'; $('#barsTitle').textContent='Value Over Time'; $('#s3l').textContent='Real Value at Horizon'; $('#s4l').textContent='Power Lost'; }
+    if(m==='arbitrage'){ $('#chartTitle').textContent='Real Cost of Borrowing'; $('#barsTitle').textContent='Inflation vs Interest'; $('#s3l').textContent='Real Total Paid (PV)'; $('#s4l').textContent='Real Interest / Subsidy'; }
+
+    // Mode note (understated)
+    const note = {
+      wealth: '',
+      debt: '',
+      inflation: '',
+      arbitrage: "Compares your loan's nominal rate to inflation to show the real cost. If real rate is negative, inflation is quietly paying part of the loan."
+    };
+    const noteEl = document.getElementById('modeNote');
+    if(noteEl) noteEl.textContent = note[m] || '';
+
+    calc();
+  }
+
+  // Charts
+  function lineChart(el, points, {pad=30, stroke='#7cc4ff'}={}){
+    const svg = el; while(svg.firstChild) svg.removeChild(svg.firstChild);
+    const W = svg.clientWidth||800, H = svg.clientHeight||280; svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+    if(!points || points.length<2){ return; }
+    const xs = points.map(p=>p.x), ys = points.map(p=>p.y);
+    const minX=Math.min(...xs), maxX=Math.max(...xs);
+    const minY=Math.min(...ys,0), maxY=Math.max(...ys);
+    const x = v=> pad + (W-2*pad)*( (v-minX) / (maxX-minX||1) );
+    const y = v=> H-pad - (H-2*pad)*( (v-minY) / (maxY-minY||1) );
+
+    // grid
+    for(let i=0;i<=5;i++){
+      const yy = pad + i*(H-2*pad)/5;
+      const ln = document.createElementNS('http://www.w3.org/2000/svg','line');
+      ln.setAttribute('x1',pad); ln.setAttribute('x2',W-pad); ln.setAttribute('y1',yy); ln.setAttribute('y2',yy);
+      ln.setAttribute('stroke','#232336'); ln.setAttribute('opacity','0.35'); svg.appendChild(ln);
+    }
+    // axes
+    const axX=document.createElementNS('http://www.w3.org/2000/svg','line'); axX.setAttribute('x1',pad); axX.setAttribute('x2',W-pad); axX.setAttribute('y1',H-pad); axX.setAttribute('y2',H-pad); axX.setAttribute('stroke','#3a3a55'); svg.appendChild(axX);
+    const axY=document.createElementNS('http://www.w3.org/2000/svg','line'); axY.setAttribute('x1',pad); axY.setAttribute('x2',pad); axY.setAttribute('y1',pad); axY.setAttribute('y2',H-pad); axY.setAttribute('stroke','#3a3a55'); svg.appendChild(axY);
+
+    // path
+    const d = points.map((p,i)=> (i? 'L':'M') + x(p.x)+','+y(p.y)).join(' ');
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', d);
+    path.setAttribute('fill','none'); path.setAttribute('stroke', stroke); path.setAttribute('stroke-width','2');
+    svg.appendChild(path);
+
+    // end dot
+    const last = points[points.length-1];
+    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('cx',x(last.x)); dot.setAttribute('cy',y(last.y)); dot.setAttribute('r','3.5'); dot.setAttribute('fill', stroke);
+    svg.appendChild(dot);
+  }
+
+  // Calculations per mode
+  function calc(){
+    const v1=+$('#v1').value; const v2=+$('#v2').value; const v3=+$('#v3').value; const p4=+$('#v4').value; const r = p4/100;
+    pushURL();
+
+    if(mode==='wealth') return doWealth(v1,v2,v3,r,p4);
+    if(mode==='debt') return doDebt(v1,v2,v3,r,p4);
+    if(mode==='inflation') return doInflation(v1,v2,v3,r,p4);
+    if(mode==='arbitrage') return doArb(v1, v2, v3/100, r, p4);
+  }
+
+  function doWealth(startAge, initial, monthly, r, p4){
+    const endAge = 65; // KPI at 65; chart to 75 for context
+    const chartEnd = 75;
+    const doub72 = p4>0? 72/p4 : Infinity;
+    const doubExact = exactDoubling(r);
+    $('#s1v').textContent = `${isFinite(doub72)?doub72.toFixed(1)+'y':'—'} / ${isFinite(doubExact)?doubExact.toFixed(1)+'y':'—'}`;
+    $('#s1l').textContent = 'Years to Double (72 vs exact)';
+
+    const pts=[]; let millionaireAge='—';
+    for(let age=startAge; age<=chartEnd; age++){
+      const t = age-startAge;
+      let val = initial * Math.pow(1+r,t);
+      if (r>0) val += monthly*12*((Math.pow(1+r,t)-1)/r); else val += monthly*12*t;
+      pts.push({x:age,y:val});
+      if(millionaireAge==='—' && val>=1_000_000) millionaireAge = age;
+    }
+
+    const yrs = clamp(endAge-startAge,0,80);
+    let fv = initial*Math.pow(1+r,yrs);
+    if(r>0) fv += monthly*12*((Math.pow(1+r,yrs)-1)/r); else fv += monthly*12*yrs;
+
+    $('#s2v').textContent = millionaireAge; $('#s2l').textContent='Age at $1M (approx)';
+    $('#s3v').textContent = fmtMoney(fv);
+    $('#s4v').textContent = fmtMoney(initial + monthly*12*yrs);
+
+    // Chart + ASCII
+    lineChart($('#chart'), pts, {stroke:'#7cc4ff'});
+    $('#ascii').textContent = asciiSparkline(pts.map(p=>p.y));
+
+    // List timeline
+    const every5 = pts.filter((_,i)=>i%5===0);
+    $('#barsList').innerHTML = every5.map(p=>`<li><b>Age ${p.x}</b>: ${fmtMoney(p.y)} ${p.y>=1_000_000 && p.x<=65 ? '← MILLIONAIRE' : ''}</li>`).join('');
+
+    // Insight
+    const lateStart = startAge+10; const lateYears = clamp(endAge-lateStart,0,80);
+    let fvLate = initial*Math.pow(1+r,lateYears); if(r>0) fvLate += monthly*12*((Math.pow(1+r,lateYears)-1)/r); else fvLate += monthly*12*lateYears;
+    const diff = fv - fvLate;
+    $('#insight').innerHTML = `<div class="card">Start ${10} years earlier → <b class="good">${fmtMoney(diff)}</b> advantage by ${endAge}. Compounding is rude to procrastinators.</div>`;
+  }
+
+  function doDebt(age, balance0, pay, r, p4){
+    const doub72 = p4>0? 72/p4 : Infinity;
+    $('#s1v').textContent = `${isFinite(doub72)?doub72.toFixed(1)+'y':'—'}`; $('#s1l').textContent='Years for debt to double (no payments)';
+
+    const m = r/12; let bal=balance0, month=0, totalPaid=0; const pts=[]; let negative=false;
+    if (m===0){
+      if(pay<=0){ negative=true; }
+      else { const months = Math.ceil(bal/pay); totalPaid = months*pay; month = months; bal=0; }
+    } else {
+      for(month=0; month<600 && bal>0; month++){
+        const interest = bal*m; const principal = pay - interest;
+        if (principal<=0){ negative=true; break; }
+        bal = Math.max(0, bal - principal); totalPaid += pay;
+        if ((month+1)%12===0) pts.push({x:(month+1)/12, y: bal});
+      }
+    }
+
+    if (negative){
+      $('#s2v').innerHTML = 'Never'; $('#s2l').textContent='Time to pay off (payment too low)'; $('#s2v').classList.add('bad');
+      $('#s3v').textContent = '—'; $('#s4v').textContent='—';
+    } else {
+      $('#s2v').textContent = (month/12).toFixed(1)+' yrs'; $('#s2l').textContent='Time to pay off';
+      $('#s3v').textContent = fmtMoney(totalPaid); $('#s3l').textContent='Total Amount Paid';
+      $('#s4v').textContent = fmtMoney(totalPaid - balance0); $('#s4l').textContent='Interest Paid';
+    }
+
+    const chartPts = pts.length? pts : [{x:0,y:balance0},{x:1,y:Math.max(0,balance0 - Math.max(0,pay - balance0*(r/12))*12)}];
+    lineChart($('#chart'), chartPts, {stroke: negative? '#ff6b6b' : '#7cc4ff'});
+    $('#ascii').textContent = asciiSparkline(chartPts.map(p=>p.y));
+
+    const list = chartPts.map(p=>`<li><b>Year ${p.x}</b>: ${fmtMoney(p.y)} ${p.y>0 && p.y<1000 ? '← almost free' : ''}</li>`);
+    $('#barsList').innerHTML = list.join('');
+
+    let alt='';
+    if(!negative){
+      const pay2 = pay*2;
+      const months2 = payoffMonths(balance0, r/12, pay2);
+      if(isFinite(months2)){
+        const total2 = months2*pay2; const save = (totalPaid||0) - total2;
+        alt = `Double your payment → save <b class="good">${fmtMoney(save)}</b> and finish in ${(months2/12).toFixed(1)} yrs.`;
+      }
+    } else {
+      const minToAmortize = bal*(r/12) + 5;
+      alt = `Your payment is below monthly interest. Raise it to at least <b class="bad">${fmtMoney(minToAmortize)}</b> to stop the bleed.`
+    }
+    $('#insight').innerHTML = `<div class="card">${alt||'Tackle highest APR first. Interest doesn’t sleep.'}</div>`;
+  }
+
+  function payoffMonths(P, m, A){
+    if(m===0) return A>0 ? Math.ceil(P/A) : Infinity;
+    if(A <= P*m) return Infinity;
+    const n = -Math.log(1 - m*P/A)/Math.log(1+m);
+    return Math.ceil(n);
+  }
+
+  function doInflation(years, startAmt, annualSave, inf, p4){
+    const doub72 = p4>0? 72/p4 : Infinity; const halfLife = inf>0? Math.log(0.5)/Math.log(1/(1+inf)) : Infinity;
+    $('#s1v').textContent = isFinite(doub72)?doub72.toFixed(1)+'y':'—'; $('#s1l').textContent='Years for prices to double (Rule of 72)';
+    $('#s2v').textContent = isFinite(halfLife)?halfLife.toFixed(1)+'y':'—'; $('#s2l').textContent='Money half‑life (exact)';
+
+    let pvSave=0; for(let t=1;t<=years;t++){ pvSave += annualSave/Math.pow(1+inf, t); }
+    const finalReal = startAmt/Math.pow(1+inf, years) + pvSave;
+    const lossPct = startAmt>0? 100*(1 - (startAmt/Math.pow(1+inf,years))/startAmt) : 0;
+
+    $('#s3v').textContent = fmtMoney(finalReal); $('#s3l').textContent = `Real value after ${years} yrs (incl. savings)`;
+    $('#s4v').textContent = isFinite(lossPct)? lossPct.toFixed(0)+'%': '—'; $('#s4l').textContent='Purchasing power lost (on initial)';
+
+    const pts=[]; for(let y=0;y<=years;y++){ pts.push({x:y, y: startAmt/Math.pow(1+inf, y)}); }
+    lineChart($('#chart'), pts, {stroke:'#ffd166'});
+    $('#ascii').textContent = asciiSparkline(pts.map(p=>p.y));
+
+    const list = pts.filter((_,i)=>i%5===0).map(p=>`<li><b>Year ${p.x}</b>: ${fmtMoney(p.y)}</li>`);
+    $('#barsList').innerHTML = list.join('');
+
+    const breadToday=4.00, breadFuture = breadToday*Math.pow(1+inf, years);
+    $('#insight').innerHTML = `<div class="card">$${breadToday.toFixed(2)} bread today → about <b class="warn">$${breadFuture.toFixed(2)}</b> in ${years} yrs at ${p4.toFixed(1)}% inflation. Inflation is the silent thief.</div>`;
+  }
+
+  function doArb(termYrs, loan, nominalRatePct, inf, p4){
+    const nominalRate = nominalRatePct; // already decimal
+    const realRate = (1+nominalRate)/(1+inf)-1;
+    $('#s1v').textContent = (realRate*100).toFixed(2)+'%'; $('#s1l').textContent='Real interest rate (Fisher exact)';
+
+    const m = nominalRate===0? 0 : r12(nominalRate);
+    const n = Math.round(termYrs*12);
+    const payment = m===0? (loan/n) : loan * (m) / (1 - Math.pow(1+m,-n));
+
+    let pv=0; for(let k=1;k<=n;k++){ pv += payment/Math.pow(1+inf, k/12); }
+    const realInterest = pv - loan;
+
+    $('#s2v').textContent = realRate<0? 'YES' : 'NO'; $('#s2v').classList.toggle('good', realRate<0); $('#s2v').classList.toggle('bad', realRate>=0);
+    $('#s2l').textContent = realRate<0? 'Getting paid to borrow' : 'Still paying in real terms';
+    $('#s3v').textContent = fmtMoney(pv);
+    $('#s4v').textContent = (realInterest<0? '−' : '+') + fmtMoney(Math.abs(realInterest));
+
+    const pts=[]; for(let y=0; y<=termYrs; y++){
+      const k = Math.round(y*12);
+      let balNom;
+      if(m===0){ balNom = Math.max(0, loan - payment*k); }
+      else {
+        const a = Math.pow(1+m, k);
+        balNom = loan*a - payment*(a-1)/m;
+        balNom = Math.max(0, balNom);
+      }
+      const balReal = balNom/Math.pow(1+inf, y);
+      pts.push({x:y, y: balReal});
+    }
+    lineChart($('#chart'), pts, {stroke: realRate<0? '#63e6be' : '#ffd166'});
+    $('#ascii').textContent = asciiSparkline(pts.map(p=>p.y));
+
+    const list = pts.filter((_,i)=>i%5===0).map(p=>`<li><b>Year ${p.x}</b>: ${fmtMoney(p.y)}</li>`);
+    $('#barsList').innerHTML = list.join('');
+
+    const blurb = realRate<0
+      ? `Inflation outpaces your rate by ${(Math.abs(realRate)*100).toFixed(1)}%. In today’s dollars you pay <b class="good">${fmtMoney(pv)}</b> total — a real subsidy.`
+      : `Even after inflation, you pay <b class="warn">${fmtMoney(realInterest)}</b> above principal in today’s dollars.`;
+    $('#insight').innerHTML = `<div class="card">${blurb}</div>`;
+  }
+
+  // Tiny ASCII sparkline from values
+  function asciiSparkline(vals){
+    if(!vals || !vals.length) return '';
+    const blocks = '▁▂▃▄▅▆▇█';
+    const min = Math.min(...vals), max = Math.max(...vals);
+    const range = (max-min)||1;
+    return vals.map(v=> blocks[Math.min(7, Math.floor( (v-min)/range * 7))]).join('');
+  }
+
+  // Events
+  $$('.mode').forEach(b=> b.addEventListener('click', ()=> setMode(b.dataset.mode)) );
+  $('#calc').addEventListener('click', calc);
+  ['v1','v2','v3','v4'].forEach(id=> $('#'+id).addEventListener('input', debounce(calc, 80)) );
+  $('#reset').addEventListener('click', ()=> setMode(mode,true));
+  $('#copy').addEventListener('click', async ()=>{
+    try{ await navigator.clipboard.writeText(location.href); const t=$('#copy').textContent; $('#copy').textContent='Copied!'; setTimeout(()=>$('#copy').textContent=t,1200);}catch(e){ alert('Copy failed'); }
+  });
+  window.addEventListener('resize', debounce(calc, 120));
+
+  function debounce(fn,ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn.apply(this,a),ms);} }
+
+  // Boot
+  restoreURL();
+  calc();
+})();
+</script>
+</body>
+</html>
