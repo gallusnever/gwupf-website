@@ -89,7 +89,7 @@ tr:hover { background: var(--bg-tertiary); }
 .col-6 { grid-column: span 6; }
 .col-8 { grid-column: span 8; }
 .col-12 { grid-column: span 12; }
-@media (max-width: 900px) { .col-3, .col-4, .col-6, .col-8 { grid-column: span 12; } header { flex-direction: column !important; gap: 1rem; } }
+@media (max-width: 900px) { .col-3, .col-4, .col-6, .col-8 { grid-column: span 12; } }
 .kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
 .kpi .tile { background: var(--bg-tertiary); border: 1px solid var(--border); padding: 0.75rem 1rem; border-radius: 6px; }
 .kpi .label { color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; letter-spacing: .06em; }
@@ -107,12 +107,13 @@ a:hover { text-decoration: underline; }
 </head>
 <body>
   <div class="container">
-    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-      <div>
-        <h1>Payment & Affordability Calculator</h1>
-        <p class="text-muted mb-2">Fast, accurate, and clean. Pick a mode and product; the form adapts. Monthly schedule includes real dates. Export as CSV.</p>
-      </div>
-      <a href="../" style="color: var(--text-secondary); text-decoration: none; font-weight: 600; padding: 10px 20px; border: 1px solid var(--border); transition: all 0.2s ease; white-space: nowrap;">← Home</a>
+    <div style="padding: 20px; margin-bottom: 0;">
+      <a href="../" style="font-size: 1.25rem; font-weight: 700; color: var(--text); text-decoration: none;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text)'">gwupf</a>
+    </div>
+    
+    <header style="text-align: center; margin-bottom: 2rem; padding: 40px 20px; background: var(--bg-secondary); border: 1px solid var(--border);">
+      <h1>Payment & Affordability Calculator</h1>
+      <p class="text-muted mb-2">Fast, accurate, and clean. Pick a mode and product; the form adapts. Monthly schedule includes real dates. Export as CSV.</p>
     </header>
     
     <!-- Disclaimer -->

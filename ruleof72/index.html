@@ -67,24 +67,24 @@
   .list li{margin:4px 0;color:var(--ink-2)}
   .list li b{color:var(--ink)}
   footer{margin-top:16px;color:var(--ink-2);font-size:12px}
-  @media (max-width: 768px) { header { flex-direction: column !important; gap: 1rem; } }
 </style>
 </head>
 <body>
   <div class="wrap">
-    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-      <div>
-        <div class="title">
-          <h1>THE RULE OF 72 — LAB</h1>
-        </div>
-        <div class="sub">Rule of 72: years to double ≈ <b>72 ÷ annual rate (%)</b>. Popularized by <b>Luca Pacioli</b> in 1494 (Summa de arithmetica).</div>
-        <div id="modeNote" class="sub"></div>
+    <div style="padding: 0 0 20px 0;">
+      <a href="../" style="font-size: 1.25rem; font-weight: 700; color: var(--text); text-decoration: none;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text)'">gwupf</a>
+    </div>
+    
+    <header style="text-align: center; margin-bottom: 1rem; padding: 20px; background: var(--panel); border: 1px solid var(--grid); border-radius: 14px;">
+      <div class="title">
+        <h1>THE RULE OF 72 — LAB</h1>
       </div>
-      <a href="../" style="color: var(--text-secondary); text-decoration: none; font-weight: 600; padding: 10px 20px; border: 1px solid var(--border); transition: all 0.2s ease; white-space: nowrap; margin-left: 20px;">← Home</a>
+      <div class="sub">Rule of 72: years to double ≈ <b>72 ÷ annual rate (%)</b>. Popularized by <b>Luca Pacioli</b> in 1494 (Summa de arithmetica).</div>
+      <div id="modeNote" class="sub"></div>
     </header>
     
     <!-- Disclaimer -->
-    <div style="background: rgba(255, 56, 56, 0.1); border: 1px solid var(--danger); border-left: 3px solid var(--danger); padding: 12px 20px; margin-bottom: 1rem; font-size: 0.85rem; color: var(--text-secondary); text-align: center;">
+    <div style="background: rgba(255, 56, 56, 0.1); border: 1px solid var(--danger); border-left: 3px solid var(--danger); padding: 12px 20px; margin-bottom: 1rem; font-size: 0.85rem; color: var(--text-secondary); text-align: center; border-radius: 12px;">
       <strong style="color: var(--danger); text-transform: uppercase; letter-spacing: 0.5px; margin-right: 8px;">Disclaimer:</strong> This tool is provided AS IS without warranty. The creator assumes no liability for any damages or losses from its use. Users accept full responsibility for all outcomes. Not a substitute for professional financial advice.
     </div>
 

@@ -34,41 +34,31 @@
             min-height: 100vh;
         }
         
+        /* Top Navigation */
+        .top-nav {
+            padding: 20px;
+            margin-bottom: 0;
+        }
+        
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+        }
+        
+        .logo:hover {
+            color: var(--accent);
+        }
+        
         .header {
+            text-align: center;
             margin-bottom: 0;
             padding: 2rem;
             background: var(--bg-secondary);
             border: 1px solid var(--border);
             position: relative;
             overflow: hidden;
-        }
-        
-        .header-wrapper {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .header-main {
-            text-align: center;
-            flex: 1;
-        }
-        
-        .home-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 600;
-            padding: 10px 20px;
-            border: 1px solid var(--border);
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-        
-        .home-link:hover {
-            color: var(--accent);
-            border-color: var(--accent);
         }
         
         .disclaimer-bar {
@@ -395,13 +385,6 @@
             .input-section {
                 grid-template-columns: 1fr;
             }
-            .header-wrapper {
-                flex-direction: column;
-                gap: 20px;
-            }
-            .home-link {
-                margin-top: 10px;
-            }
             .disclaimer-bar {
                 font-size: 0.75rem;
                 padding: 10px 15px;
@@ -420,14 +403,13 @@
     </div>
     
     <div class="container">
+        <div class="top-nav">
+            <a href="../" class="logo">gwupf</a>
+        </div>
+        
         <div class="header">
-            <div class="header-wrapper">
-                <div class="header-main">
-                    <h1>HOME PURCHASE DECISION TOOL</h1>
-                    <div class="subtitle">Comprehensive Analysis System</div>
-                </div>
-                <a href="../" class="home-link">← Home</a>
-            </div>
+            <h1>HOME PURCHASE DECISION TOOL</h1>
+            <div class="subtitle">Comprehensive Analysis System</div>
         </div>
         
         <div class="disclaimer-bar">
