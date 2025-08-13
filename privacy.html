@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<!-- Copyright (c) 2025 GWUPF. All rights reserved. -->
+<!-- This code is proprietary and confidential. Unauthorized copying or distribution is prohibited. -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy | GWUPF</title>
+    <meta name="description" content="Privacy policy for GWUPF personal tools - no cookies, minimal data collection">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --accent: #00a8ff;
+            --bg: #0a0a0a;
+            --bg-secondary: #141414;
+            --text: #e4e4e4;
+            --text-secondary: #888888;
+            --border: #2a2a2a;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s;
+            font-weight: 600;
+        }
+
+        .nav a:hover {
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            color: var(--accent);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        ul {
+            margin: 1rem 0 1rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="/" class="logo">gwupf</a>
+            <nav class="nav">
+                <a href="/">Tools</a>
+                <a href="/#about">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <a href="/" class="back-link">← Back to Tools</a>
+        
+        <h1>Privacy</h1>
+
+        <p>Last updated: January 2025</p>
+
+        <h2>The Short Version</h2>
+        <p>No cookies. No tracking pixels. No personal data collection unless you use a tool that requires it (like the ASC 842 calculator's terms acceptance). Even then, we keep it minimal.</p>
+
+        <h2>What We Collect</h2>
+        <ul>
+            <li><strong>Most tools:</strong> Nothing. They run in your browser.</li>
+            <li><strong>ASC 842 calculator:</strong> When you accept terms, we log a hash (not your name), timestamp, and calculation inputs for performance monitoring.</li>
+            <li><strong>Server logs:</strong> Standard web server logs (IP, timestamp, page requested) auto-deleted after 30 days.</li>
+        </ul>
+
+        <h2>What We Don't Do</h2>
+        <ul>
+            <li>No cookies or tracking</li>
+            <li>No selling or sharing data</li>
+            <li>No marketing emails</li>
+            <li>No third-party analytics</li>
+        </ul>
+
+        <h2>Why We Log Anything</h2>
+        <p>For tools requiring terms acceptance: proof of acceptance and basic usage monitoring to improve the tools.</p>
+
+        <h2>Data Retention</h2>
+        <ul>
+            <li>Server logs: 30 days</li>
+            <li>Terms acceptance logs: 1 year</li>
+            <li>Calculation logs: 90 days</li>
+        </ul>
+
+        <h2>Your Rights</h2>
+        <p>Want your data deleted? Email delete@getwhatupayfor.tools with your approximate usage date/time. We'll remove what we can find.</p>
+
+        <h2>Changes</h2>
+        <p>If we change this policy, we'll update the date at the top. No sneaky stuff.</p>
+
+        <h2>Questions?</h2>
+        <p>Intentionally no contact info. These are personal tools shared publicly, not a business.</p>
+    </div>
+
+    <footer>
+        © 2025 GWUPF · Personal tools, no warranty · Not firm-endorsed · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a>
+    </footer>
+</body>
+</html>

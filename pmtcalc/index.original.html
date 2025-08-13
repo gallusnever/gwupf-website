@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<!-- Copyright (c) 2025 GWUPF. All rights reserved. -->
+<!-- This code is proprietary and confidential. Unauthorized copying or distribution is prohibited. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Payment & Affordability Calculator | GWUPF</title>
+<style>
+/* =============================
+   GWUPF Design System (from user)
+   ============================= */
+/* GWUPF Design System -*/
+/* Core Variables */
+:root {
+    --accent: #00a8ff;
+    --success: #00ff41;
+    --warning: #ffbb33;
+    --danger: #ff3838;
+    --bg: #0a0a0a;
+    --bg-secondary: #141414;
+    --bg-tertiary: #1a1a1a;
+    --text: #e4e4e4;
+    --text-secondary: #888888;
+    --border: #2a2a2a;
+}
+/* Base Setup */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 2rem;
+}
+/* Typography */
+ h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 1rem; }
+ h2 { font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: 0.75rem; }
+ p  { color: var(--text-secondary); margin-bottom: 1rem; }
+/* Containers */
+.container { max-width: 1200px; margin: 0 auto; background: var(--bg-secondary); border: 1px solid var(--border); padding: 2rem; }
+/* Buttons */
+.btn { padding: 0.5rem 1rem; border: 1px solid var(--border); background: transparent; color: var(--text); font-size: 0.875rem; cursor: pointer; transition: all 0.2s; font-family: inherit; font-weight: 600; border-radius: 4px; user-select: none; }
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn-primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.btn-primary:hover { background: transparent; color: var(--accent); }
+.btn-success { background: var(--success); color: var(--bg); border-color: var(--success); }
+.btn-warning { background: var(--warning); color: var(--bg); border-color: var(--warning); }
+.btn-ghost { background: transparent; border-color: var(--border); color: var(--text-secondary); }
+.btn-toggle.active { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+/* Forms */
+label { font-weight: 600; display: block; margin-bottom: 0.35rem; color: var(--text); }
+input, textarea, select { width: 100%; padding: 0.5rem; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: inherit; font-size: 0.95rem; margin-bottom: 1rem; border-radius: 4px; }
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); }
+/* Tables */
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: var(--bg-tertiary); color: var(--text); font-weight: 600; position: sticky; top: 0; z-index: 2; }
+td { color: var(--text-secondary); }
+tr:hover { background: var(--bg-tertiary); }
+/* Cards */
+.card { background: var(--bg-secondary); border: 1px solid var(--border); padding: 1.25rem; margin-bottom: 1rem; border-radius: 6px; }
+.card:hover { border-color: var(--accent); }
+/* Alerts */
+.alert { padding: 1rem; margin-bottom: 1rem; border-left: 3px solid; border-radius: 4px; }
+.alert-success { background: rgba(0, 255, 65, 0.06); border-color: var(--success); color: var(--success); }
+.alert-warning { background: rgba(255, 187, 51, 0.08); border-color: var(--warning); color: var(--warning); }
+.alert-error { background: rgba(255, 56, 56, 0.08); border-color: var(--danger); color: var(--danger); }
+/* Status Indicators */
+.status { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 0.5rem; }
+.status-active { background: var(--success); box-shadow: 0 0 8px var(--success); }
+.status-warning { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
+.status-error { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+/* Utility Classes */
+.text-muted { color: var(--text-secondary); }
+.text-small { font-size: 0.875rem; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.inline { display: inline-flex; align-items: center; gap: 0.5rem; }
+.row { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; }
+.col-3 { grid-column: span 3; }
+.col-4 { grid-column: span 4; }
+.col-6 { grid-column: span 6; }
+.col-8 { grid-column: span 8; }
+.col-12 { grid-column: span 12; }
+@media (max-width: 900px) { .col-3, .col-4, .col-6, .col-8 { grid-column: span 12; } }
+.kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.kpi .tile { background: var(--bg-tertiary); border: 1px solid var(--border); padding: 0.75rem 1rem; border-radius: 6px; }
+.kpi .label { color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; letter-spacing: .06em; }
+.kpi .value { font-size: 1.25rem; font-weight: 700; color: var(--text); }
+.divider { height: 1px; background: var(--border); margin: 1rem 0; }
+.badge { padding: .2rem .5rem; border: 1px solid var(--border); border-radius: 999px; font-size: .75rem; color: var(--text-secondary); }
+.segment { display: inline-flex; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.segment button { border: none; border-right: 1px solid var(--border); padding: .5rem .75rem; }
+.segment button:last-child { border-right: none; }
+.segment button.active { background: var(--accent); color: var(--bg); }
+.help { color: var(--text-secondary); font-size: .85rem; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div style="padding: 20px; margin-bottom: 0;">
+      <a href="../" style="font-size: 1.25rem; font-weight: 700; color: var(--text); text-decoration: none;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text)'">gwupf</a>
+    </div>
+    
+    <header style="text-align: center; margin-bottom: 2rem; padding: 40px 20px; background: var(--bg-secondary); border: 1px solid var(--border);">
+      <h1>Payment & Affordability Calculator</h1>
+      <p class="text-muted mb-2">Fast, accurate, and clean. Pick a mode and product; the form adapts. Monthly schedule includes real dates. Export as CSV.</p>
+    </header>
+    
+    <!-- Disclaimer -->
+    <div style="background: rgba(255, 56, 56, 0.1); border: 1px solid var(--danger); border-left: 3px solid var(--danger); padding: 12px 20px; margin-bottom: 2rem; font-size: 0.85rem; color: var(--text-secondary); text-align: center;">
+      <strong style="color: var(--danger); text-transform: uppercase; letter-spacing: 0.5px; margin-right: 8px;">Disclaimer:</strong> This tool is provided AS IS without warranty. The creator assumes no liability for any damages or losses from its use. Users accept full responsibility for all outcomes. Not a substitute for professional financial advice.
+    </div>
+    <!-- Controls: Mode + Product -->
+    <div class="card">
+      <div class="row">
+        <div class="col-6">
+          <label>Mode</label>
+          <div id="modeSegment" class="segment" role="tablist" aria-label="Calculation mode">
+            <button class="btn-toggle active" data-mode="payment" aria-selected="true">Payment</button>
+            <button class="btn-toggle" data-mode="maxloan" aria-selected="false">Max Loan</button>
+          </div>
+        </div>
+        <div class="col-6">
+          <label>Product</label>
+          <div id="productSegment" class="segment" role="tablist" aria-label="Product type">
+            <button class="btn-toggle active" data-product="auto" aria-selected="true">Auto</button>
+            <button class="btn-toggle" data-product="mortgage" aria-selected="false">Mortgage</button>
+            <button class="btn-toggle" data-product="other" aria-selected="false">Other</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Inputs -->
+    <div id="inputs" class="card"><span class="text-muted">Loading form… (If you see this for more than a second, your browser blocked scripts.)</span></div>
+
+    <!-- Results -->
+    <div id="results" class="card" style="display:none;">
+      <div class="row">
+        <div class="col-8">
+          <h2 class="inline">Results <span id="resultBadge" class="badge text-small">—</span></h2>
+          <p id="resultSub" class="text-muted mt-1"></p>
+        </div>
+        <div class="col-4 inline" style="justify-content:flex-end;">
+          <button id="downloadCsvBtn" class="btn">Download CSV</button>
+          <button id="copyLinkBtn" class="btn btn-ghost">Copy Share Link</button>
+        </div>
+      </div>
+
+      <div class="kpi mt-2">
+        <div class="tile"><div class="label">Monthly Payment (P&amp;I)</div><div class="value" id="kpiPmt">$0</div></div>
+        <div class="tile"><div class="label">All-in Monthly</div><div class="value" id="kpiAllIn">$0</div></div>
+        <div class="tile"><div class="label">Total Interest</div><div class="value" id="kpiInterest">$0</div></div>
+        <div class="tile"><div class="label">Payoff Date</div><div class="value" id="kpiPayoff">—</div></div>
+      </div>
+
+      <div class="divider"></div>
+      <div id="contextBlurb" class="help"></div>
+      <div class="divider"></div>
+
+      <div style="max-height: 420px; overflow: auto;">
+        <table id="amTable">
+          <thead id="amHead"></thead>
+          <tbody id="amBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <div class="text-small text-muted">
+      Keyboard tips: Tab through fields; Enter to compute. Your inputs auto-save to your browser (local only).
+    </div>
+  </div>
+
+<script>
+// ==========================
+// Utilities
+// ==========================
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+function toMoney(n) { if (!isFinite(n)) return '$0'; return n.toLocaleString(undefined, {style:'currency', currency:'USD', maximumFractionDigits: 2}); }
+function toPct(n) { if (!isFinite(n)) return '0%'; return (n*100).toLocaleString(undefined, {maximumFractionDigits: 2}) + '%'; }
+function parseNumber(val, defaultVal=0) { if (typeof val === 'number') return val; if (!val) return defaultVal; const cleaned = String(val).replace(/[^0-9.\-]/g,'').trim(); const num = parseFloat(cleaned); return isNaN(num) ? defaultVal : num; }
+function parsePercent(val, defaultVal=0) { if (typeof val === 'number') return val/100; if (!val) return defaultVal; const s = String(val).trim(); if (s.endsWith('%')) return parseNumber(s)/100; return parseNumber(s)/100; }
+function addMonths(date, months) { const d = new Date(date.getTime()); const day = d.getDate(); d.setDate(1); d.setMonth(d.getMonth() + months); const lastDay = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate(); d.setDate(Math.min(day, lastDay)); return d; }
+function firstPaymentDefault() { const now = new Date(); const firstOfNext = new Date(now.getFullYear(), now.getMonth()+1, 1); return firstOfNext.toISOString().slice(0,10); }
+function pmt(ratePerPeriod, nPeriods, present) { if (ratePerPeriod === 0) return present / nPeriods; const r = ratePerPeriod; return present * (r * Math.pow(1+r, nPeriods)) / (Math.pow(1+r, nPeriods) - 1); }
+function principalFromPayment(ratePerPeriod, nPeriods, payment) { if (ratePerPeriod === 0) return payment * nPeriods; const r = ratePerPeriod; return payment * (Math.pow(1+r, nPeriods) - 1) / (r * Math.pow(1+r, nPeriods)); }
+function scheduleToCsv(rows, headers) { const head = headers.join(','); const lines = rows.map(r => headers.map(h => { const val = r[h]; const s = (val !== undefined && val !== null) ? String(val) : ''; if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"'; return s; }).join(',')); return [head, ...lines].join('\n'); }
+const STORAGE_KEY = 'gwupf_calc_state_v1';
+function saveState(state) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
+function loadState() { try { const s = localStorage.getItem(STORAGE_KEY); if (!s) return null; return JSON.parse(s); } catch(e){ return null; } }
+function buildShareLink(state) { try { const payload = btoa(unescape(encodeURIComponent(JSON.stringify(state)))); const url = new URL(window.location); url.hash = payload; return url.toString(); } catch(e) { return window.location.toString(); } }
+function readShareLink() { try { if (!location.hash) return null; const payload = decodeURIComponent(escape(atob(location.hash.substring(1)))); return JSON.parse(payload); } catch(e){ return null; } }
+// ==========================
+// Dynamic form rendering
+// ==========================
+const defaults = {
+  mode: 'payment', product: 'auto', firstPayment: firstPaymentDefault(), extraPrincipal: 0,
+  auto_price: 35000, auto_down: 5000, auto_trade: 0, auto_taxRatePct: 0.085, auto_fees: 450, auto_aprPct: 0.069, auto_termMonths: 60, auto_maxPmt: 600,
+  mtg_price: 400000, mtg_downPct: 0.20, mtg_downAmt: 80000, mtg_termYears: 30, mtg_aprPct: 0.065, mtg_taxRatePct: 0.0125, mtg_insAnnual: 1800, mtg_hoaMonthly: 0, mtg_pmiRatePct: 0.005, mtg_pmiDropPct: 0.80, mtg_allInConstraint: 'piti', mtg_maxPmt: 3000,
+  oth_amount: 20000, oth_aprPct: 0.099, oth_termMonths: 48, oth_maxPmt: 500
+};
+let state = {...defaults};
+function setMode(m) { state.mode = m; $$('#modeSegment .btn-toggle').forEach(b => b.classList.toggle('active', b.dataset.mode === m)); renderInputs(); }
+function setProduct(p) { state.product = p; $$('#productSegment .btn-toggle').forEach(b => b.classList.toggle('active', b.dataset.product === p)); renderInputs(); }
+function inputNumber(id, label, value, step='0.01', attrs='') { return `<div class="col-4"><label for="${id}">${label}</label><input id="${id}" type="number" step="${step}" value="${value}" ${attrs} /></div>`; }
+function inputPercent(id, label, value, step='0.01') { return `<div class="col-4"><label for="${id}">${label}</label><div class="inline" style="width:100%; gap:.5rem;"><input id="${id}" type="number" step="${step}" value="${(value*100).toFixed(3)}" /><span class="badge">%</span></div></div>`; }
+function inputDate(id, label, value) { return `<div class="col-4"><label for="${id}">${label}</label><input id="${id}" type="date" value="${value}" /></div>`; }
+function selectSimple(id, label, options, value) { const opts = options.map(o => `<option value="${o.value}" ${o.value===value?'selected':''}>${o.label}</option>`).join(''); return `<div class="col-4"><label for="${id}">${label}</label><select id="${id}">${opts}</select></div>`; }
+function renderInputs() {
+  const m = state.mode, p = state.product; let html = '<div class="row">';
+  if (p === 'auto') { if (m === 'payment') { html += inputNumber('auto_price','Vehicle Price ($)',state.auto_price,'0.01','min="0"'); html += inputNumber('auto_down','Down Payment ($)',state.auto_down,'0.01','min="0"'); html += inputNumber('auto_trade','Trade-In Value ($)',state.auto_trade,'0.01','min="0"'); html += inputPercent('auto_taxRatePct','Sales Tax Rate',state.auto_taxRatePct); html += inputNumber('auto_fees','Fees (doc/title/etc) ($)',state.auto_fees,'0.01','min="0"'); html += inputPercent('auto_aprPct','APR',state.auto_aprPct); html += inputNumber('auto_termMonths','Term (months)',state.auto_termMonths,'1','min="1"'); } else { html += inputNumber('auto_maxPmt','Max Monthly Payment ($)',state.auto_maxPmt,'0.01','min="0"'); html += inputPercent('auto_aprPct','APR',state.auto_aprPct); html += inputNumber('auto_termMonths','Term (months)',state.auto_termMonths,'1','min="1"'); html += inputNumber('auto_down','Down Payment ($)',state.auto_down,'0.01','min="0"'); html += inputNumber('auto_trade','Trade-In Value ($)',state.auto_trade,'0.01','min="0"'); html += inputPercent('auto_taxRatePct','Sales Tax Rate',state.auto_taxRatePct); html += inputNumber('auto_fees','Fees (doc/title/etc) ($)',state.auto_fees,'0.01','min="0"'); } }
+  if (p === 'mortgage') { if (m === 'payment') { html += inputNumber('mtg_price','Home Price ($)',state.mtg_price,'0.01','min="0"'); html += inputPercent('mtg_downPct','Down Payment (%)',state.mtg_downPct); html += inputNumber('mtg_downAmt','Down Payment ($)',state.mtg_downAmt,'0.01','min="0"'); html += inputNumber('mtg_termYears','Term (years)',state.mtg_termYears,'1','min="1"'); html += inputPercent('mtg_aprPct','APR',state.mtg_aprPct); html += inputPercent('mtg_taxRatePct','Property Tax Rate (of price)',state.mtg_taxRatePct); html += inputNumber('mtg_insAnnual','Homeowner\'s Insurance (annual $)',state.mtg_insAnnual,'0.01','min="0"'); html += inputNumber('mtg_hoaMonthly','HOA (monthly $)',state.mtg_hoaMonthly,'0.01','min="0"'); html += inputPercent('mtg_pmiRatePct','PMI Rate (annual % of loan)',state.mtg_pmiRatePct); html += inputPercent('mtg_pmiDropPct','PMI Drop LTV (%)',state.mtg_pmiDropPct); } else { html += inputNumber('mtg_maxPmt','Max Monthly Payment ($)',state.mtg_maxPmt,'0.01','min="0"'); html += selectSimple('mtg_allInConstraint','Constraint Applies To',[{value:'pi',label:'P&I only'},{value:'piti',label:'All-in (P&I + Tax + Ins + HOA + PMI)'}],state.mtg_allInConstraint); html += inputPercent('mtg_aprPct','APR',state.mtg_aprPct); html += inputNumber('mtg_termYears','Term (years)',state.mtg_termYears,'1','min="1"'); html += inputPercent('mtg_downPct','Down Payment (%)',state.mtg_downPct); html += inputNumber('mtg_insAnnual','Homeowner\'s Insurance (annual $)',state.mtg_insAnnual,'0.01','min="0"'); html += inputPercent('mtg_taxRatePct','Property Tax Rate (of price)',state.mtg_taxRatePct); html += inputNumber('mtg_hoaMonthly','HOA (monthly $)',state.mtg_hoaMonthly,'0.01','min="0"'); html += inputPercent('mtg_pmiRatePct','PMI Rate (annual % of loan)',state.mtg_pmiRatePct); html += inputPercent('mtg_pmiDropPct','PMI Drop LTV (%)',state.mtg_pmiDropPct); } }
+  if (p === 'other') { if (m === 'payment') { html += inputNumber('oth_amount','Loan Amount ($)',state.oth_amount,'0.01','min="0"'); html += inputPercent('oth_aprPct','APR',state.oth_aprPct); html += inputNumber('oth_termMonths','Term (months)',state.oth_termMonths,'1','min="1"'); } else { html += inputNumber('oth_maxPmt','Max Monthly Payment ($)',state.oth_maxPmt,'0.01','min="0"'); html += inputPercent('oth_aprPct','APR',state.oth_aprPct); html += inputNumber('oth_termMonths','Term (months)',state.oth_termMonths,'1','min="1"'); } }
+  if (m === 'payment') { html += inputDate('firstPayment','First Payment Date',state.firstPayment); } else { html += inputDate('firstPayment','Assumed First Payment Date',state.firstPayment); }
+  html += inputNumber('extraPrincipal','Extra Principal Monthly ($)',state.extraPrincipal,'0.01','min="0"');
+  html += '</div>'; html += `
+    <div class="inline">
+      <button id="computeBtn" class="btn btn-primary">Calculate</button>
+      <button id="resetBtn" class="btn btn-ghost">Reset</button>
+    </div>
+    <p class="help mt-1">For mortgages, "All-in" includes P&I, property tax, insurance, HOA, and PMI (until it drops at the LTV threshold).</p>
+  `;
+  $('#inputs').innerHTML = html;
+  $('#computeBtn').addEventListener('click', compute);
+  $('#resetBtn').addEventListener('click', () => { state = {...defaults}; renderInputs(); $('#results').style.display='none'; });
+  $$('#inputs input, #inputs select').forEach(el => {
+    el.addEventListener('input', () => {
+      const id = el.id; let val = el.value;
+      if (id.endsWith('Pct')) { state[id] = parsePercent(val, 0); if (id==='mtg_downPct') { const price = parseNumber($('#mtg_price') ? $('#mtg_price').value : state.mtg_price, state.mtg_price); state.mtg_downAmt = +(price * state.mtg_downPct).toFixed(2); const amtEl = $('#mtg_downAmt'); if (amtEl) amtEl.value = state.mtg_downAmt; } }
+      else if (id === 'mtg_downAmt') { state[id] = parseNumber(val, 0); const price = parseNumber($('#mtg_price') ? $('#mtg_price').value : state.mtg_price, state.mtg_price); state.mtg_downPct = price > 0 ? state.mtg_downAmt / price : 0; const pctEl = $('#mtg_downPct'); if (pctEl) pctEl.value = (state.mtg_downPct*100).toFixed(3); }
+      else if (el.type === 'number') { state[id] = parseNumber(val, 0); }
+      else if (el.type === 'date') { state[id] = val; }
+      else { state[id] = val; }
+    });
+    el.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); compute(); } });
+  });
+}
+function compute() {
+  saveState(state);
+  const m = state.mode, p = state.product; const firstPay = new Date(state.firstPayment || firstPaymentDefault()); const extra = Math.max(0, +state.extraPrincipal || 0);
+  let result = null;
+  if (p === 'auto') {
+    const r = state.auto_aprPct / 12; const n = Math.max(1, Math.round(state.auto_termMonths));
+    if (m === 'payment') {
+      const price = Math.max(0, state.auto_price); const down = Math.max(0, state.auto_down); const trade = Math.max(0, state.auto_trade); const taxRate = Math.max(0, state.auto_taxRatePct); const fees = Math.max(0, state.auto_fees);
+      const loan = price*(1+taxRate) - down - trade*(1+taxRate) + fees; const pmtPI = pmt(r, n, loan);
+      result = buildSchedule({kind:'auto', principal: loan, rate: r, n, firstPay, extra, price, down, trade, taxRate, fees, pmtPI});
+    } else {
+      const maxPmt = Math.max(0, state.auto_maxPmt); const n = Math.max(1, Math.round(state.auto_termMonths)); const r = state.auto_aprPct / 12; const down = Math.max(0, state.auto_down); const trade = Math.max(0, state.auto_trade); const taxRate = Math.max(0, state.auto_taxRatePct); const fees = Math.max(0, state.auto_fees);
+      const loan = principalFromPayment(r, n, maxPmt); const price = (loan + down + trade*(1+taxRate) - fees) / (1+taxRate); const pmtPI = pmt(r, n, loan);
+      result = buildSchedule({kind:'auto', principal: loan, rate: r, n, firstPay, extra, price, down, trade, taxRate, fees, pmtPI, targetMonthly:maxPmt});
+    }
+  }
+  if (p === 'mortgage') {
+    const r = state.mtg_aprPct / 12; const n = Math.max(1, Math.round(state.mtg_termYears*12)); const taxRate = Math.max(0, state.mtg_taxRatePct); const insMonthly = Math.max(0, state.mtg_insAnnual)/12; const hoa = Math.max(0, state.mtg_hoaMonthly); const pmiRate = Math.max(0, state.mtg_pmiRatePct); const pmiDrop = Math.max(0, state.mtg_pmiDropPct);
+    if (m === 'payment') {
+      const price = Math.max(0, state.mtg_price); const down = Math.min(price, Math.max(0, state.mtg_downAmt ?? price*state.mtg_downPct)); const principal = Math.max(0, price - down); const pmtPI = pmt(r, n, principal);
+      result = buildSchedule({ kind:'mortgage', principal, rate:r, n, firstPay, extra, price, down, taxRate, insMonthly, hoa, pmiRate, pmiDrop, pmtPI });
+    } else {
+      const M = Math.max(0, state.mtg_maxPmt); const downPct = Math.max(0, state.mtg_downPct); const constraint = state.mtg_allInConstraint;
+      function monthlyAtPrice(price) { const down = price * downPct; const principal = Math.max(0, price - down); const pmtPI = pmt(r, n, principal); const ltv0 = (principal / price) || 0; const pmiMonthly = (ltv0 > pmiDrop) ? (pmiRate * principal / 12) : 0; const escrow = taxRate*price/12 + insMonthly + hoa; const allIn = pmtPI + pmiMonthly + escrow; return {pmtPI, allIn, down, principal, pmiMonthly, escrow}; }
+      let lo = 1, hi = 10000000; for (let i=0;i<60;i++) { const mid = (lo+hi)/2; const mMid = monthlyAtPrice(mid); const compare = (constraint==='pi') ? mMid.pmtPI : mMid.allIn; if (compare > M) { hi = mid; } else { lo = mid; } }
+      const price = lo; const mPrice = monthlyAtPrice(price); const pmtPI = mPrice.pmtPI;
+      result = buildSchedule({ kind:'mortgage', principal: mPrice.principal, rate:r, n, firstPay, extra, price, down: mPrice.down, taxRate, insMonthly, hoa, pmiRate, pmiDrop, pmtPI, targetMonthly:M, constraint });
+    }
+  }
+  if (p === 'other') {
+    const r = state.oth_aprPct / 12; const n = Math.max(1, Math.round(state.oth_termMonths));
+    if (m === 'payment') { const principal = Math.max(0, state.oth_amount); const pmtPI = pmt(r, n, principal); result = buildSchedule({kind:'other', principal, rate:r, n, firstPay, extra, pmtPI}); }
+    else { const M = Math.max(0, state.oth_maxPmt); const principal = principalFromPayment(r, n, M); const pmtPI = pmt(r, n, principal); result = buildSchedule({kind:'other', principal, rate:r, n, firstPay, extra, pmtPI, targetMonthly:M}); }
+  }
+  if (!result) return;
+  $('#results').style.display = 'block'; $('#kpiPmt').textContent = toMoney(result.pmtPI); $('#kpiAllIn').textContent = toMoney(result.allInMonthly); $('#kpiInterest').textContent = toMoney(result.totalInterest); $('#kpiPayoff').textContent = result.payoffDateStr; $('#resultBadge').textContent = result.badge; $('#resultSub').textContent = result.sub;
+  const head = $('#amHead'); const body = $('#amBody'); head.innerHTML = ''; body.innerHTML = '';
+  const headers = result.headers; const trh = document.createElement('tr'); headers.forEach(h => { const th = document.createElement('th'); th.textContent = h; trh.appendChild(th); }); head.appendChild(trh);
+  const maxShow = 600; result.rows.slice(0, maxShow).forEach(r => { const tr = document.createElement('tr'); headers.forEach(h => { const td = document.createElement('td'); td.textContent = r[h]; tr.appendChild(td); }); body.appendChild(tr); });
+  if (result.rows.length > maxShow) { const tr = document.createElement('tr'); const td = document.createElement('td'); td.colSpan = headers.length; td.innerHTML = `<span class="text-muted">Showing ${maxShow} of ${result.rows.length} rows — download CSV for the full schedule.</span>`; tr.appendChild(td); body.appendChild(tr); }
+  const csv = scheduleToCsv(result.rows, headers); $('#downloadCsvBtn').onclick = () => { const blob = new Blob([csv], {type:'text/csv'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'amortization.csv'; a.click(); URL.revokeObjectURL(url); };
+  $('#copyLinkBtn').onclick = () => { const link = buildShareLink(state); navigator.clipboard.writeText(link).then(() => { $('#copyLinkBtn').textContent = 'Link copied'; setTimeout(()=>$('#copyLinkBtn').textContent='Copy Share Link', 1200); }).catch(()=>{}); };
+  $('#contextBlurb').innerHTML = result.contextHtml;
+}
+function buildSchedule(opts) {
+  const { kind, principal, rate, n, firstPay, extra } = opts; const rows = []; let headers = ['#','Date','Payment','Principal','Interest','Extra','Balance']; let balance = principal; const pmtPI = isFinite(opts.pmtPI) ? opts.pmtPI : pmt(rate, n, principal); const startDate = new Date(firstPay.getTime()); let currDate = startDate; let escrowMonthly = 0, pmiMonthly = 0, pmiDropPct = 0.8, price = 0, hoa = 0;
+  if (kind === 'mortgage') { price = opts.price || 0; const taxMonthly = (opts.taxRate || 0) * price / 12; const insMonthly = opts.insMonthly || 0; hoa = opts.hoa || 0; escrowMonthly = taxMonthly + insMonthly + hoa; const ltv0 = (principal / (price||1)); pmiDropPct = opts.pmiDrop || 0.8; pmiMonthly = (ltv0 > pmiDropPct) ? ((opts.pmiRate || 0) * principal / 12) : 0; headers = ['#','Date','Payment (P&I)','Principal','Interest','Extra','PMI','Escrow','All-in','Balance']; }
+  let totalInterest = 0; let i=0; while (balance > 0 && i < n+1200) { const interest = rate * balance; const basePrincipal = Math.min(balance, pmtPI - interest); const payExtra = Math.min(balance - basePrincipal, extra); const principalPaid = basePrincipal + (payExtra>0?payExtra:0); const payment = basePrincipal + interest; balance = +(balance - principalPaid).toFixed(10); totalInterest += interest; let thisPmi = 0, thisEscrow = 0, allIn = payment + payExtra; if (kind === 'mortgage') { const ltv = (balance / (price||1)); if (ltv <= pmiDropPct) { pmiMonthly = 0; } thisPmi = pmiMonthly; thisEscrow = escrowMonthly; allIn += thisPmi + thisEscrow; }
+    rows.push({'#': i+1,'Date': currDate.toISOString().slice(0,10),'Payment': toMoney(payment),'Payment (P&I)': toMoney(payment),'Principal': toMoney(principalPaid),'Interest': toMoney(interest),'Extra': toMoney(payExtra),'PMI': toMoney(thisPmi),'Escrow': toMoney(thisEscrow),'All-in': toMoney(allIn),'Balance': toMoney(Math.max(0, balance))}); i++; currDate = addMonths(currDate, 1); if (balance <= 0.01) { balance = 0; break; } }
+  let badge = ''; let sub = ''; let contextHtml = ''; let allInMonthly = pmtPI + extra; if (kind === 'mortgage') { allInMonthly += escrowMonthly + pmiMonthly; }
+  if (kind === 'auto') { const financed = opts.principal; const taxes = (opts.taxRate || 0) * (opts.price - (opts.trade || 0)); const fees = opts.fees || 0; badge = opts.targetMonthly ? 'Max Vehicle Price' : 'Auto Loan'; sub = opts.targetMonthly ? `Max price: ${toMoney((opts.price))} | Financed: ${toMoney(financed)} | Taxes: ${toMoney(taxes)} | Fees: ${toMoney(fees)}` : `Financed: ${toMoney(financed)} | Taxes: ${toMoney(taxes)} | Fees: ${toMoney(fees)}`; contextHtml = '<span class="text-muted">Tax base assumes price minus trade-in; fees financed. Payment shown is P&I (plus any extra you entered).</span>'; }
+  else if (kind === 'mortgage') { badge = opts.targetMonthly ? (opts.constraint==='pi' ? 'Max Home Price (P&I cap)' : 'Max Home Price (All-in cap)') : 'Mortgage'; const ltv0 = (opts.principal / (opts.price||1)); const pmiNote = (ltv0 > (opts.pmiDrop || 0.8)) ? 'PMI applies until LTV threshold' : 'No PMI at start'; sub = opts.targetMonthly ? `Price: ${toMoney(opts.price)} | Loan: ${toMoney(opts.principal)} | Down: ${toMoney(opts.down)} | ${pmiNote}` : `Loan: ${toMoney(opts.principal)} | Down: ${toMoney(opts.down)} | ${pmiNote}`; contextHtml = '<span class="text-muted">All-in = P&I + escrow (tax/ins/HOA) + PMI (until it drops). PMI modeled on original loan amount; drop when balance / price ≤ threshold.</span>'; }
+  else { badge = opts.targetMonthly ? 'Max Loan' : 'Installment Loan'; sub = opts.targetMonthly ? `Principal: ${toMoney(opts.principal)}` : `Principal: ${toMoney(opts.principal)}`; contextHtml = '<span class="text-muted">Standard amortization with level payments. Extra principal accelerates payoff.</span>'; }
+  return { headers, rows, totalInterest, payoffDateStr: rows.length ? rows[rows.length-1]['Date'] : '—', badge, sub, contextHtml, pmtPI, allInMonthly };
+}
+(function init(){ const shared = readShareLink(); const saved = loadState(); if (shared) state = {...state, ...shared}; else if (saved) state = {...state, ...saved}; $$('#modeSegment .btn-toggle').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode))); $$('#productSegment .btn-toggle').forEach(b => b.addEventListener('click', () => setProduct(b.dataset.product))); setMode(state.mode); setProduct(state.product); setTimeout(compute, 50); })();
+</script>
+</body>
+</html>

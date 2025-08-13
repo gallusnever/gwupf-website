@@ -108,6 +108,21 @@ a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
+    <header style="background: #0a0a0a; border-bottom: 1px solid #2a2a2a; padding: 1.5rem 0; position: sticky; top: 0; z-index: 1000;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <a href="https://getwhatupayfor.tools" style="font-size: 1.25rem; font-weight: 700; color: #e4e4e4; text-decoration: none;">GWUPF</a>
+                <span style="color: #888888;">·</span>
+                <a href="https://getwhatupayfor.tools" style="color: #888888; text-decoration: none; font-size: 0.875rem;">Tools</a>
+                <span style="color: #888888;">·</span>
+                <a href="https://getwhatupayfor.tools/#about" style="color: #888888; text-decoration: none; font-size: 0.875rem;">About</a>
+            </div>
+        </div>
+    </header>
+    <div style="max-width: 1200px; margin: 0 auto; padding: 1rem 2rem 0;">
+        <a href="https://getwhatupayfor.tools" style="display: inline-block; color: #00a8ff; text-decoration: none; font-size: 0.875rem; margin-bottom: 1rem;">← Back to Tools</a>
+    </div>
+
   <div class="container">
     <div style="padding: 20px; margin-bottom: 0;">
       <a href="../" style="font-size: 1.25rem; font-weight: 700; color: var(--text); text-decoration: none;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text)'">gwupf</a>
@@ -306,5 +321,9 @@ function buildSchedule(opts) {
 }
 (function init(){ const shared = readShareLink(); const saved = loadState(); if (shared) state = {...state, ...shared}; else if (saved) state = {...state, ...saved}; $$('#modeSegment .btn-toggle').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode))); $$('#productSegment .btn-toggle').forEach(b => b.addEventListener('click', () => setProduct(b.dataset.product))); setMode(state.mode); setProduct(state.product); setTimeout(compute, 50); })();
 </script>
+
+    <footer style="text-align: center; padding: 2rem; border-top: 1px solid #2a2a2a; margin-top: 4rem; color: #888888; font-size: 0.875rem;">
+        © 2025 GWUPF · Personal tools, no warranty · Not firm-endorsed · <a href="https://getwhatupayfor.tools/privacy" style="color: #00a8ff;">Privacy</a> · <a href="https://getwhatupayfor.tools/terms" style="color: #00a8ff;">Terms</a>
+    </footer>
 </body>
 </html>

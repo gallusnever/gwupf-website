@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<!-- Copyright (c) 2025 GWUPF. All rights reserved. -->
+<!-- This code is proprietary and confidential. Unauthorized copying or distribution is prohibited. -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Purchase Decision Tool | GWUPF</title>
+    <style>
+        /* GWUPF Design System */
+        :root {
+            --accent: #00a8ff;
+            --success: #00ff41;
+            --warning: #ffbb33;
+            --danger: #ff3838;
+            --bg: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-tertiary: #1a1a1a;
+            --text: #e4e4e4;
+            --text-secondary: #888888;
+            --border: #2a2a2a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        
+        /* Top Navigation */
+        .top-nav {
+            padding: 20px;
+            margin-bottom: 0;
+        }
+        
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+        }
+        
+        .logo:hover {
+            color: var(--accent);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 0;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .disclaimer-bar {
+            background: rgba(255, 56, 56, 0.1);
+            border: 1px solid var(--danger);
+            border-left: 3px solid var(--danger);
+            padding: 12px 20px;
+            margin-bottom: 3rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+        
+        .disclaimer-bar strong {
+            color: var(--danger);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: 8px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+        
+        .header .subtitle {
+            color: var(--accent);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(0, 168, 255, 0.1);
+        }
+        
+        .card h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .status {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-active {
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+        
+        .status-warning {
+            background: var(--warning);
+            box-shadow: 0 0 8px var(--warning);
+        }
+        
+        .status-info {
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(0, 168, 255, 0.2);
+        }
+        
+        .scale-input {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .scale-input input[type="range"] {
+            flex: 1;
+        }
+        
+        .scale-value {
+            min-width: 30px;
+            text-align: center;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--accent);
+            background: transparent;
+            color: var(--accent);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            background: var(--accent);
+            color: var(--bg);
+            box-shadow: 0 0 20px rgba(0, 168, 255, 0.4);
+        }
+        
+        .btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,168,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover:before {
+            left: 100%;
+        }
+        
+        .results-section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .verdict {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .decision-score {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+        
+        .score-excellent { color: var(--success); }
+        .score-okay { color: var(--warning); }
+        .score-bad { color: var(--danger); }
+        
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .metric-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        /* ASCII Chart Styles */
+        .ascii-chart {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            overflow-x: auto;
+            color: var(--text);
+            line-height: 1.2;
+            font-size: 0.875rem;
+        }
+        
+        .chart-title {
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        /* Terminal Loading Screen */
+        .loading-terminal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            z-index: 1000;
+            padding: 2rem;
+            overflow: hidden;
+        }
+        
+        .loading-terminal.active {
+            display: block;
+        }
+        
+        .terminal-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            font-family: 'Courier New', monospace;
+            color: var(--success);
+            white-space: pre;
+            line-height: 1.2;
+        }
+        
+        .terminal-line {
+            opacity: 0;
+            animation: typeIn 0.1s forwards;
+        }
+        
+        @keyframes typeIn {
+            to { opacity: 1; }
+        }
+        
+        .recommendation-box {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--accent);
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .recommendation-title {
+            color: var(--accent);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .recommendation-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 0.5rem;
+        }
+        
+        @media (max-width: 1200px) {
+            .input-section {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .input-section {
+                grid-template-columns: 1fr;
+            }
+            .disclaimer-bar {
+                font-size: 0.75rem;
+                padding: 10px 15px;
+            }
+        }
+        
+        .bar-red { color: var(--danger); }
+        .bar-yellow { color: var(--warning); }
+        .bar-green { color: var(--success); }
+        .bar-blue { color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="loading-terminal" id="loadingTerminal">
+        <div class="terminal-content" id="terminalContent"></div>
+    </div>
+    
+    <div class="container">
+        <div class="top-nav">
+            <a href="../" class="logo">gwupf</a>
+        </div>
+        
+        <div class="header">
+            <h1>HOME PURCHASE DECISION TOOL</h1>
+            <div class="subtitle">Comprehensive Analysis System</div>
+        </div>
+        
+        <div class="disclaimer-bar">
+            <strong>Disclaimer:</strong> This tool is provided AS IS without warranty. The creator assumes no liability for any damages or losses from its use. Users accept full responsibility for all outcomes. Not a substitute for professional financial advice.
+        </div>
+        
+        <div class="input-section">
+            <div class="card">
+                <h2><span class="status status-active"></span> Current Home</h2>
+                <div class="input-group">
+                    <label>Purchase Price</label>
+                    <input type="number" id="currentPurchasePrice" placeholder="450000">
+                </div>
+                <div class="input-group">
+                    <label>Current Value</label>
+                    <input type="number" id="currentValue" placeholder="550000">
+                </div>
+                <div class="input-group">
+                    <label>Your Rate (%)</label>
+                    <input type="number" id="currentRate" step="0.1" placeholder="3.5">
+                </div>
+                <div class="input-group">
+                    <label>Years Owned</label>
+                    <input type="number" id="yearsOwned" placeholder="3">
+                </div>
+                <div class="input-group">
+                    <label>Monthly Payment</label>
+                    <input type="number" id="currentPayment" placeholder="2100">
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2><span class="status status-warning"></span> New Home</h2>
+                <div class="input-group">
+                    <label>Purchase Price</label>
+                    <input type="number" id="newPurchasePrice" placeholder="750000">
+                </div>
+                <div class="input-group">
+                    <label>Down Payment (%)</label>
+                    <input type="number" id="downPayment" value="20" placeholder="20">
+                </div>
+                <div class="input-group">
+                    <label>Current Market Rate (%)</label>
+                    <input type="number" id="marketRate" step="0.1" placeholder="6.8" value="6.8">
+                </div>
+                <div class="input-group">
+                    <label>Property Tax/Year</label>
+                    <input type="number" id="propertyTax" placeholder="9000">
+                </div>
+                <div class="input-group">
+                    <label>HOA/Month</label>
+                    <input type="number" id="hoaFees" placeholder="0">
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2><span class="status status-info"></span> Life Factors</h2>
+                <div class="input-group">
+                    <label>School Quality Improvement</label>
+                    <div class="scale-input">
+                        <input type="range" id="schoolQuality" min="1" max="10" value="5">
+                        <span class="scale-value" id="schoolValue">5</span>
+                    </div>
+                    <small style="color: var(--text-secondary); font-size: 0.7rem;">1 = worse schools | 5 = same quality | 10 = much better</small>
+                </div>
+                <div class="input-group">
+                    <label>Missing Features Importance</label>
+                    <div class="scale-input">
+                        <input type="range" id="missingFeatures" min="1" max="10" value="5">
+                        <span class="scale-value" id="featuresValue">5</span>
+                    </div>
+                    <small style="color: var(--text-secondary); font-size: 0.7rem;">How important are features you lack? (office, garage, yard)<br>1 = not important | 10 = critically needed</small>
+                </div>
+                <div class="input-group">
+                    <label>Current Neighbor Situation</label>
+                    <div class="scale-input">
+                        <input type="range" id="neighborSituation" min="1" max="10" value="5">
+                        <span class="scale-value" id="neighborValue">5</span>
+                    </div>
+                    <small style="color: var(--text-secondary); font-size: 0.7rem;">1 = terrible (need to escape) | 5 = neutral | 10 = perfect</small>
+                </div>
+                <div class="input-group">
+                    <label>Commute Change (minutes)</label>
+                    <input type="number" id="commuteChange" placeholder="-10" value="0">
+                    <small style="color: var(--text-secondary); font-size: 0.7rem;">Use negative for shorter (e.g., -10 = saves 10 min)</small>
+                </div>
+                <div class="input-group">
+                    <label>Consider Rental?</label>
+                    <select id="considerRental">
+                        <option value="yes">Yes - Keep as rental</option>
+                        <option value="no" selected>No - Must sell</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn" onclick="analyzeDecision()">
+            [ ANALYZE DECISION ]
+        </button>
+        
+        <div id="resultsSection" class="results-section">
+            <div class="verdict">
+                <h2>DECISION ANALYSIS</h2>
+                <div id="decisionScore" class="decision-score">--</div>
+                <p id="verdictText"></p>
+            </div>
+            
+            <div class="metric-grid" id="metricsGrid">
+                <!-- Metrics will be inserted here -->
+            </div>
+            
+            <div class="ascii-chart">
+                <div class="chart-title">╔════════════════════════════════════════════╗
+║           TRUE COST BREAKDOWN              ║
+╚════════════════════════════════════════════╝</div>
+                <pre id="costChart"></pre>
+            </div>
+            
+            <div class="ascii-chart">
+                <div class="chart-title">╔════════════════════════════════════════════╗
+║         EQUITY POSITION ANALYSIS           ║
+╚════════════════════════════════════════════╝</div>
+                <pre id="equityChart"></pre>
+            </div>
+            
+            <div class="ascii-chart">
+                <div class="chart-title">╔════════════════════════════════════════════╗
+║          10-YEAR OPPORTUNITY COST          ║
+╚════════════════════════════════════════════╝</div>
+                <pre id="opportunityChart"></pre>
+            </div>
+            
+            <div class="recommendation-box" id="recommendations">
+                <div class="recommendation-title">STRATEGIC RECOMMENDATIONS</div>
+                <div id="recommendationContent"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="config.js"></script>
+    <script src="decision-engine.js"></script>
+</body>
+</html>
