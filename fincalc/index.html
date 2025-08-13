@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HP 12c Financial Calculator | GWUPF</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --accent: #00a8ff;
+            --success: #00ff41;
+            --warning: #ffbb33;
+            --danger: #ff3838;
+            --bg: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-tertiary: #1a1a1a;
+            --text: #e4e4e4;
+            --text-secondary: #888888;
+            --border: #2a2a2a;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg);
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Top Navigation */
+        .top-nav {
+            padding: 20px;
+            margin-bottom: 0;
+        }
+        
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+        }
+        
+        .logo:hover {
+            color: var(--accent);
+        }
+        
+        /* Main wrapper */
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        /* Disclaimer */
+        .disclaimer-bar {
+            background: rgba(255, 56, 56, 0.1);
+            border: 1px solid var(--danger);
+            border-left: 3px solid var(--danger);
+            padding: 12px 20px;
+            margin-bottom: 2rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 700px;
+            width: 100%;
+        }
+        
+        .disclaimer-bar strong {
+            color: var(--danger);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: 8px;
+        }
+
+        .calculator-container {
+            background: #2c2416;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .calculator {
+            background: linear-gradient(180deg, #3d342a 0%, #2c2416 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #1a1511;
+            width: 650px;
+        }
+
+        .brand {
+            color: #d4af37;
+            font-size: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .model {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .display-container {
+            background: #1a1a0a;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #0a0a05;
+        }
+
+        .display {
+            background: #4a5440;
+            color: #e8f4d0;
+            padding: 10px;
+            text-align: right;
+            font-size: 24px;
+            font-family: 'Digital', 'Courier New', monospace;
+            min-height: 40px;
+            border-radius: 3px;
+            text-shadow: 0 0 5px #a0d080;
+            letter-spacing: 2px;
+        }
+
+        .status-line {
+            display: flex;
+            justify-content: space-between;
+            color: #8a9680;
+            font-size: 10px;
+            margin-top: 5px;
+            padding: 0 5px;
+        }
+
+        .keyboard {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+        }
+
+        .key {
+            background: linear-gradient(145deg, #4a4a4a, #2a2a2a);
+            color: #ffffff;
+            border: none;
+            padding: 12px 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.3);
+            transition: all 0.1s;
+            position: relative;
+            min-height: 45px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .key:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+        }
+
+        .key:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .key.gold {
+            background: linear-gradient(145deg, #d4af37, #b8941f);
+            color: #000;
+        }
+
+        .key.blue {
+            background: linear-gradient(145deg, #4169e1, #1e3a8a);
+        }
+
+        .key.orange {
+            background: linear-gradient(145deg, #ff6b35, #cc5528);
+        }
+
+        .key-label-top {
+            font-size: 8px;
+            color: #d4af37;
+            position: absolute;
+            top: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .key-label-bottom {
+            font-size: 8px;
+            color: #4169e1;
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .stack-display {
+            background: #2c2416;
+            border: 1px solid #4a4a4a;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 20px;
+            color: #d4af37;
+            font-size: 12px;
+        }
+
+        .stack-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+
+        .memory-display {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+            padding: 10px;
+            background: #1a1511;
+            border-radius: 5px;
+        }
+
+        .memory-cell {
+            text-align: center;
+            color: #8a9680;
+            font-size: 10px;
+        }
+
+        .memory-value {
+            color: #d4af37;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-nav">
+        <a href="../" class="logo">gwupf</a>
+    </div>
+    
+    <div class="main-wrapper">
+        <div class="disclaimer-bar">
+            <strong>Disclaimer:</strong> This tool is provided AS IS without warranty. The creator assumes no liability for any damages or losses from its use. Users accept full responsibility for all outcomes. Not a substitute for professional financial advice.
+        </div>
+        
+        <div class="calculator-container">
+        <div class="calculator">
+            <div class="brand">
+                <span>gwupf</span>
+                <span class="model">Cash went up because we got more cash</span>
+            </div>
+            
+            <div class="display-container">
+                <div class="display" id="display">0.</div>
+                <div class="status-line">
+                    <span id="mode">RPN</span>
+                    <span id="status"></span>
+                </div>
+            </div>
+
+            <div class="keyboard">
+                <!-- Row 1 -->
+                <button class="key" data-key="n">
+                    <span class="key-label-top">amort</span>
+                    n
+                </button>
+                <button class="key" data-key="i">
+                    <span class="key-label-top">INT</span>
+                    i
+                </button>
+                <button class="key" data-key="PV">
+                    <span class="key-label-top">NPV</span>
+                    PV
+                </button>
+                <button class="key" data-key="PMT">
+                    <span class="key-label-top">RND</span>
+                    PMT
+                </button>
+                <button class="key" data-key="FV">
+                    <span class="key-label-top">IRR</span>
+                    FV
+                </button>
+                <button class="key" data-key="CHS">CHS</button>
+                <button class="key" data-key="7">7</button>
+                <button class="key" data-key="8">8</button>
+                <button class="key" data-key="9">9</button>
+                <button class="key" data-key="/">÷</button>
+
+                <!-- Row 2 -->
+                <button class="key" data-key="y^x">
+                    <span class="key-label-top">√x</span>
+                    y^x
+                </button>
+                <button class="key" data-key="1/x">1/x</button>
+                <button class="key" data-key="%T">%T</button>
+                <button class="key" data-key="Δ%">Δ%</button>
+                <button class="key" data-key="%">%</button>
+                <button class="key" data-key="EEX">EEX</button>
+                <button class="key" data-key="4">4</button>
+                <button class="key" data-key="5">5</button>
+                <button class="key" data-key="6">6</button>
+                <button class="key" data-key="*">×</button>
+
+                <!-- Row 3 -->
+                <button class="key" data-key="R/S">R/S</button>
+                <button class="key" data-key="SST">SST</button>
+                <button class="key" data-key="R↓">R↓</button>
+                <button class="key" data-key="x<>y">x⇄y</button>
+                <button class="key" data-key="CLx">CLx</button>
+                <button class="key gold" data-key="f">f</button>
+                <button class="key" data-key="1">1</button>
+                <button class="key" data-key="2">2</button>
+                <button class="key" data-key="3">3</button>
+                <button class="key" data-key="-">−</button>
+
+                <!-- Row 4 -->
+                <button class="key orange" data-key="ON">ON</button>
+                <button class="key" data-key="STO">STO</button>
+                <button class="key" data-key="RCL">RCL</button>
+                <button class="key" data-key="SST">SST</button>
+                <button class="key" data-key="ENTER">ENTER</button>
+                <button class="key blue" data-key="g">g</button>
+                <button class="key" data-key="0">0</button>
+                <button class="key" data-key=".">.</button>
+                <button class="key" data-key="Σ+">Σ+</button>
+                <button class="key" data-key="+">+</button>
+            </div>
+
+            <div class="stack-display">
+                <div class="stack-row">
+                    <span>T:</span><span id="stack-t">0</span>
+                </div>
+                <div class="stack-row">
+                    <span>Z:</span><span id="stack-z">0</span>
+                </div>
+                <div class="stack-row">
+                    <span>Y:</span><span id="stack-y">0</span>
+                </div>
+                <div class="stack-row">
+                    <span>X:</span><span id="stack-x">0</span>
+                </div>
+            </div>
+
+            <div class="memory-display">
+                <div class="memory-cell">
+                    <div>n</div>
+                    <div class="memory-value" id="fin-n">0</div>
+                </div>
+                <div class="memory-cell">
+                    <div>i</div>
+                    <div class="memory-value" id="fin-i">0</div>
+                </div>
+                <div class="memory-cell">
+                    <div>PV</div>
+                    <div class="memory-value" id="fin-pv">0</div>
+                </div>
+                <div class="memory-cell">
+                    <div>PMT</div>
+                    <div class="memory-value" id="fin-pmt">0</div>
+                </div>
+                <div class="memory-cell">
+                    <div>FV</div>
+                    <div class="memory-value" id="fin-fv">0</div>
+                </div>
+            </div>
+
+            <div class="memory-display">
+                <div class="memory-cell">
+                    <div>R0</div>
+                    <div class="memory-value" id="mem-0">0</div>
+                </div>
+                <div class="memory-cell">
+                    <div>R1</div>
+                    <div class="memory-value" id="mem-1">0</div>
+                </div>
+                <div class="memory-cell">
+                    <div>R2</div>
+                    <div class="memory-value" id="mem-2">0</div>
+                </div>
+                <div class="memory-cell">
+                    <div>R3</div>
+                    <div class="memory-value" id="mem-3">0</div>
+                </div>
+                <div class="memory-cell">
+                    <div>R4</div>
+                    <div class="memory-value" id="mem-4">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class HP12C {
+            constructor() {
+                this.stack = [0, 0, 0, 0]; // X, Y, Z, T
+                this.lastX = 0;
+                this.memory = new Array(20).fill(0);
+                this.display = document.getElementById('display');
+                this.inputBuffer = '';
+                this.enterPressed = false;
+                this.newNumber = true;
+                this.stoMode = false;
+                this.rclMode = false;
+                this.fMode = false;
+                this.gMode = false;
+                
+                // Financial registers
+                this.n = 0;
+                this.i = 0;
+                this.pv = 0;
+                this.pmt = 0;
+                this.fv = 0;
+                
+                this.initEventListeners();
+                this.updateDisplay();
+                this.updateFinancialDisplay();
+            }
+
+            initEventListeners() {
+                document.querySelectorAll('.key').forEach(key => {
+                    key.addEventListener('click', (e) => {
+                        const keyValue = e.currentTarget.dataset.key;
+                        this.handleKey(keyValue);
+                    });
+                });
+
+                document.addEventListener('keydown', (e) => {
+                    const keyMap = {
+                        'Enter': 'ENTER',
+                        'Escape': 'CLx',
+                        'Backspace': 'CLx',
+                        '+': '+',
+                        '-': '-',
+                        '*': '*',
+                        '/': '/',
+                        '.': '.',
+                        '0': '0', '1': '1', '2': '2', '3': '3', '4': '4',
+                        '5': '5', '6': '6', '7': '7', '8': '8', '9': '9'
+                    };
+                    
+                    if (keyMap[e.key]) {
+                        e.preventDefault();
+                        this.handleKey(keyMap[e.key]);
+                    }
+                });
+            }
+
+            handleKey(key) {
+                // Handle storage modes
+                if (this.stoMode) {
+                    if (!isNaN(key)) {
+                        this.memory[parseInt(key)] = this.stack[0];
+                        this.stoMode = false;
+                        this.updateMemoryDisplay();
+                        return;
+                    }
+                    this.stoMode = false;
+                }
+
+                if (this.rclMode) {
+                    if (!isNaN(key)) {
+                        this.pushStack(this.memory[parseInt(key)]);
+                        this.rclMode = false;
+                        this.updateDisplay();
+                        return;
+                    }
+                    this.rclMode = false;
+                }
+
+                // Handle function modes
+                if (this.fMode) {
+                    this.handleFFunction(key);
+                    return;
+                }
+
+                if (this.gMode) {
+                    this.handleGFunction(key);
+                    return;
+                }
+
+                // Regular key handling
+                switch(key) {
+                    case '0': case '1': case '2': case '3': case '4':
+                    case '5': case '6': case '7': case '8': case '9':
+                        this.inputDigit(key);
+                        break;
+                    case '.':
+                        this.inputDecimal();
+                        break;
+                    case 'ENTER':
+                        this.enter();
+                        break;
+                    case '+':
+                        this.operation((a, b) => a + b);
+                        break;
+                    case '-':
+                        this.operation((a, b) => b - a);
+                        break;
+                    case '*':
+                        this.operation((a, b) => a * b);
+                        break;
+                    case '/':
+                        this.operation((a, b) => b / a);
+                        break;
+                    case 'CHS':
+                        this.changeSign();
+                        break;
+                    case 'CLx':
+                        this.clearX();
+                        break;
+                    case 'x<>y':
+                        this.swapXY();
+                        break;
+                    case 'R↓':
+                        this.rollDown();
+                        break;
+                    case '1/x':
+                        this.reciprocal();
+                        break;
+                    case 'y^x':
+                        this.power();
+                        break;
+                    case '%':
+                        this.percent();
+                        break;
+                    case 'STO':
+                        this.stoMode = true;
+                        break;
+                    case 'RCL':
+                        this.rclMode = true;
+                        break;
+                    case 'f':
+                        this.fMode = true;
+                        break;
+                    case 'g':
+                        this.gMode = true;
+                        break;
+                    case 'n':
+                        this.n = this.stack[0];
+                        console.log('Stored n:', this.n);
+                        this.newNumber = true;  // Ready for new input
+                        this.inputBuffer = '';  // Clear the input buffer
+                        this.updateFinancialDisplay();
+                        break;
+                    case 'i':
+                        this.i = this.stack[0];
+                        console.log('Stored i:', this.i);
+                        this.newNumber = true;  // Ready for new input
+                        this.inputBuffer = '';  // Clear the input buffer
+                        this.updateFinancialDisplay();
+                        break;
+                    case 'PV':
+                        this.pv = this.stack[0];
+                        console.log('Stored PV:', this.pv);
+                        this.newNumber = true;  // Ready for new input
+                        this.inputBuffer = '';  // Clear the input buffer
+                        this.updateFinancialDisplay();
+                        break;
+                    case 'PMT':
+                        this.solvePMT();
+                        this.updateFinancialDisplay();
+                        break;
+                    case 'FV':
+                        this.fv = this.stack[0];
+                        console.log('Stored FV:', this.fv);
+                        this.newNumber = true;  // Ready for new input
+                        this.inputBuffer = '';  // Clear the input buffer
+                        this.updateFinancialDisplay();
+                        break;
+                    case 'ON':
+                        this.clearAll();
+                        break;
+                }
+            }
+
+            handleFFunction(key) {
+                this.fMode = false;
+                switch(key) {
+                    case 'n': // amort
+                        // Simplified amortization
+                        break;
+                    case 'i': // INT
+                        this.stack[0] = Math.floor(this.stack[0]);
+                        break;
+                    case 'PV': // NPV calculation
+                        this.calculateNPV();
+                        break;
+                    case 'PMT': // Could solve for PMT with modifier
+                        this.solvePMT();
+                        break;
+                    case 'FV': // IRR calculation
+                        this.calculateIRR();
+                        break;
+                    case 'y^x': // sqrt
+                        this.stack[0] = Math.sqrt(this.stack[0]);
+                        break;
+                }
+                this.updateDisplay();
+            }
+
+            handleGFunction(key) {
+                this.gMode = false;
+                switch(key) {
+                    case 'n': // 12×
+                        this.stack[0] *= 12;
+                        break;
+                    case 'i': // 12÷
+                        this.stack[0] /= 12;
+                        break;
+                    case 'CHS': // DATE
+                        // Date calculations
+                        break;
+                    case 'y^x': // ln
+                        this.stack[0] = Math.log(this.stack[0]);
+                        break;
+                    case '1/x': // e^x
+                        this.stack[0] = Math.exp(this.stack[0]);
+                        break;
+                }
+                this.updateDisplay();
+            }
+
+            inputDigit(digit) {
+                if (this.newNumber) {
+                    this.inputBuffer = digit;
+                    this.newNumber = false;
+                } else {
+                    if (this.inputBuffer.length < 10) {
+                        this.inputBuffer += digit;
+                    }
+                }
+                this.stack[0] = parseFloat(this.inputBuffer) || 0;
+                this.updateDisplay();
+            }
+
+            inputDecimal() {
+                if (this.newNumber) {
+                    this.inputBuffer = '0.';
+                    this.newNumber = false;
+                } else if (!this.inputBuffer.includes('.')) {
+                    this.inputBuffer += '.';
+                }
+                this.updateDisplay();
+            }
+
+            enter() {
+                if (!this.enterPressed) {
+                    this.pushStack(this.stack[0]);
+                }
+                this.enterPressed = true;
+                this.newNumber = true;
+                this.updateDisplay();
+            }
+
+            pushStack(value) {
+                this.stack[3] = this.stack[2];
+                this.stack[2] = this.stack[1];
+                this.stack[1] = this.stack[0];
+                this.stack[0] = value;
+                this.newNumber = true;
+                this.inputBuffer = '';
+            }
+
+            operation(op) {
+                this.lastX = this.stack[0];
+                const result = op(this.stack[0], this.stack[1]);
+                this.stack[0] = result;
+                this.stack[1] = this.stack[2];
+                this.stack[2] = this.stack[3];
+                this.stack[3] = 0;
+                this.newNumber = true;
+                this.enterPressed = false;
+                this.updateDisplay();
+            }
+
+            changeSign() {
+                if (this.inputBuffer && !this.newNumber) {
+                    if (this.inputBuffer.startsWith('-')) {
+                        this.inputBuffer = this.inputBuffer.substring(1);
+                    } else {
+                        this.inputBuffer = '-' + this.inputBuffer;
+                    }
+                    this.stack[0] = parseFloat(this.inputBuffer) || 0;
+                } else {
+                    this.stack[0] = -this.stack[0];
+                }
+                this.updateDisplay();
+            }
+
+            clearX() {
+                this.stack[0] = 0;
+                this.inputBuffer = '';
+                this.newNumber = true;
+                this.updateDisplay();
+            }
+
+            clearAll() {
+                this.stack = [0, 0, 0, 0];
+                this.memory = new Array(20).fill(0);
+                this.inputBuffer = '';
+                this.newNumber = true;
+                this.enterPressed = false;
+                this.n = 0;
+                this.i = 0;
+                this.pv = 0;
+                this.pmt = 0;
+                this.fv = 0;
+                this.updateDisplay();
+                this.updateMemoryDisplay();
+                this.updateFinancialDisplay();
+            }
+
+            swapXY() {
+                [this.stack[0], this.stack[1]] = [this.stack[1], this.stack[0]];
+                this.updateDisplay();
+            }
+
+            rollDown() {
+                const temp = this.stack[0];
+                this.stack[0] = this.stack[1];
+                this.stack[1] = this.stack[2];
+                this.stack[2] = this.stack[3];
+                this.stack[3] = temp;
+                this.updateDisplay();
+            }
+
+            reciprocal() {
+                if (this.stack[0] !== 0) {
+                    this.stack[0] = 1 / this.stack[0];
+                    this.updateDisplay();
+                }
+            }
+
+            power() {
+                const result = Math.pow(this.stack[1], this.stack[0]);
+                this.stack[0] = result;
+                this.stack[1] = this.stack[2];
+                this.stack[2] = this.stack[3];
+                this.stack[3] = 0;
+                this.newNumber = true;
+                this.updateDisplay();
+            }
+
+            percent() {
+                this.stack[0] = this.stack[1] * (this.stack[0] / 100);
+                this.updateDisplay();
+            }
+
+            handlePV() {
+                if (this.fMode) {
+                    this.calculateNPV();
+                    this.fMode = false;
+                } else {
+                    // Calculate PV from other financial variables
+                    const n = this.n;
+                    const i = this.i / 100;
+                    const pmt = this.pmt;
+                    const fv = this.fv;
+                    
+                    if (i === 0) {
+                        this.stack[0] = -(pmt * n + fv);
+                    } else {
+                        const pvFactor = (1 - Math.pow(1 + i, -n)) / i;
+                        const fvFactor = Math.pow(1 + i, -n);
+                        this.stack[0] = -(pmt * pvFactor + fv * fvFactor);
+                    }
+                    this.pv = this.stack[0];
+                }
+                this.updateDisplay();
+            }
+
+            solvePMT() {
+                const n = this.n;
+                const i = this.i / 100;  // Convert percentage to decimal
+                const pv = this.pv;
+                const fv = this.fv || 0;
+                
+                console.log('Calculating PMT with:', {n, i, pv, fv});
+                
+                if (i === 0) {
+                    this.stack[0] = -(pv + fv) / n;
+                } else {
+                    const pvFactor = (1 - Math.pow(1 + i, -n)) / i;
+                    this.stack[0] = -(pv + fv * Math.pow(1 + i, -n)) / pvFactor;
+                }
+                this.pmt = this.stack[0];
+                console.log('PMT result:', this.pmt);
+                this.newNumber = true;
+                this.updateDisplay();
+                this.updateFinancialDisplay();
+            }
+
+            handleFV() {
+                if (this.fMode) {
+                    this.calculateIRR();
+                    this.fMode = false;
+                } else {
+                    const n = this.n;
+                    const i = this.i / 100;
+                    const pv = this.pv;
+                    const pmt = this.pmt;
+                    
+                    if (i === 0) {
+                        this.stack[0] = -(pv + pmt * n);
+                    } else {
+                        const fvFactor = Math.pow(1 + i, n);
+                        const pmtFactor = (Math.pow(1 + i, n) - 1) / i;
+                        this.stack[0] = -(pv * fvFactor + pmt * pmtFactor);
+                    }
+                    this.fv = this.stack[0];
+                }
+                this.updateDisplay();
+            }
+
+            calculateNPV() {
+                // Simplified NPV calculation
+                let npv = this.memory[0]; // CF0
+                const rate = this.i / 100;
+                for (let j = 1; j <= this.n && j < this.memory.length; j++) {
+                    npv += this.memory[j] / Math.pow(1 + rate, j);
+                }
+                this.stack[0] = npv;
+            }
+
+            calculateIRR() {
+                // Simplified IRR calculation using Newton's method
+                let rate = 0.1; // Initial guess
+                for (let iter = 0; iter < 100; iter++) {
+                    let npv = this.memory[0];
+                    let dnpv = 0;
+                    for (let j = 1; j <= this.n && j < this.memory.length; j++) {
+                        const discount = Math.pow(1 + rate, j);
+                        npv += this.memory[j] / discount;
+                        dnpv -= j * this.memory[j] / (discount * (1 + rate));
+                    }
+                    if (Math.abs(npv) < 0.00001) break;
+                    rate = rate - npv / dnpv;
+                }
+                this.stack[0] = rate * 100;
+            }
+
+            formatNumber(num) {
+                // Handle very small numbers near zero
+                if (Math.abs(num) < 1e-10 && num !== 0) {
+                    return num.toExponential(6);
+                }
+                
+                // For typical financial numbers, avoid scientific notation
+                if (Math.abs(num) < 1e9 && Math.abs(num) >= 0.0001) {
+                    // Format with appropriate decimal places
+                    let str = num.toFixed(10);
+                    // Remove trailing zeros
+                    str = parseFloat(str).toString();
+                    
+                    // Handle the decimal point display during input
+                    if (!this.newNumber && this.inputBuffer.includes('.') && !this.inputBuffer.includes('e')) {
+                        const decimalPlaces = this.inputBuffer.split('.')[1]?.length || 0;
+                        if (decimalPlaces === 0) {
+                            return num.toFixed(0) + '.';
+                        }
+                    }
+                    
+                    // For display, show up to 2 decimal places for currency-like numbers
+                    if (Math.abs(num) >= 1) {
+                        const rounded = Math.round(num * 100) / 100;
+                        if (rounded === Math.floor(rounded)) {
+                            return rounded.toString();
+                        } else {
+                            return rounded.toFixed(2);
+                        }
+                    }
+                    
+                    return str;
+                }
+                
+                // Only use scientific notation for very large or very small numbers
+                return num.toExponential(6);
+            }
+
+            updateDisplay() {
+                const displayValue = this.newNumber || this.inputBuffer === '' 
+                    ? this.formatNumber(this.stack[0]) 
+                    : this.inputBuffer;
+                
+                this.display.textContent = displayValue;
+                
+                // Update stack display
+                document.getElementById('stack-x').textContent = this.formatNumber(this.stack[0]);
+                document.getElementById('stack-y').textContent = this.formatNumber(this.stack[1]);
+                document.getElementById('stack-z').textContent = this.formatNumber(this.stack[2]);
+                document.getElementById('stack-t').textContent = this.formatNumber(this.stack[3]);
+            }
+
+            updateMemoryDisplay() {
+                for (let i = 0; i < 5; i++) {
+                    const elem = document.getElementById(`mem-${i}`);
+                    if (elem) {
+                        elem.textContent = this.formatNumber(this.memory[i]);
+                    }
+                }
+            }
+
+            updateFinancialDisplay() {
+                document.getElementById('fin-n').textContent = this.formatNumber(this.n);
+                document.getElementById('fin-i').textContent = this.formatNumber(this.i);
+                document.getElementById('fin-pv').textContent = this.formatNumber(this.pv);
+                document.getElementById('fin-pmt').textContent = this.formatNumber(this.pmt);
+                document.getElementById('fin-fv').textContent = this.formatNumber(this.fv);
+            }
+        }
+
+        // Initialize calculator
+        const calc = new HP12C();
+    </script>
+    </div>
+</body>
+</html>
