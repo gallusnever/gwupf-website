@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<!-- Copyright (c) 2025 GWUPF. All rights reserved. -->
+<!-- This code is proprietary and confidential. Unauthorized copying or distribution is prohibited. -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -708,31 +710,57 @@
 
     <footer>
         <div class="footer-content">
-            <p>© 2024 get what u pay for · No warranty expressed or implied</p>
+            <p>© 2025 get what u pay for · No warranty expressed or implied</p>
         </div>
     </footer>
 
     <script>
-        function toggleTool(element) {
-            document.querySelectorAll('.tool-card').forEach(card => {
-                if (card !== element) {
-                    card.classList.remove('expanded');
-                }
-            });
-            element.classList.toggle('expanded');
-        }
-
-        function showPage(page) {
-            document.querySelectorAll('.page-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(page + '-page').classList.add('active');
+        // Copyright protection
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        // Disable text selection
+        document.addEventListener('selectstart', function(e) {
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+            }
+        });
+        
+        // Console warning
+        console.log('%cSTOP!', 'color: red; font-size: 50px; font-weight: bold;');
+        console.log('%cThis is a browser feature intended for developers. Code here is proprietary and protected by copyright law.', 
+                    'color: red; font-size: 16px;');
+        console.log('%cCopyright (c) 2025 GWUPF. All rights reserved.', 'color: yellow; font-size: 14px;');
+        
+        // Basic obfuscation
+        (function(){
+            'use strict';
+            const _0x1a2b = ['querySelectorAll', '.tool-card', 'forEach', 'classList', 'remove', 'expanded', 'toggle',
+                           '.page-section', 'active', 'getElementById', '-page', 'add', '.nav-link', 'target'];
             
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
-            event.target.classList.add('active');
-        }
+            window['toggleTool'] = function(element) {
+                document[_0x1a2b[0]](_0x1a2b[1])[_0x1a2b[2]](card => {
+                    if (card !== element) {
+                        card[_0x1a2b[3]][_0x1a2b[4]](_0x1a2b[5]);
+                    }
+                });
+                element[_0x1a2b[3]][_0x1a2b[6]](_0x1a2b[5]);
+            };
+
+            window['showPage'] = function(page) {
+                document[_0x1a2b[0]](_0x1a2b[7])[_0x1a2b[2]](section => {
+                    section[_0x1a2b[3]][_0x1a2b[4]](_0x1a2b[8]);
+                });
+                document[_0x1a2b[9]](page + _0x1a2b[10])[_0x1a2b[3]][_0x1a2b[11]](_0x1a2b[8]);
+                
+                document[_0x1a2b[0]](_0x1a2b[12])[_0x1a2b[2]](link => {
+                    link[_0x1a2b[3]][_0x1a2b[4]](_0x1a2b[8]);
+                });
+                event[_0x1a2b[13]][_0x1a2b[3]][_0x1a2b[11]](_0x1a2b[8]);
+            };
+        })();
     </script>
 </body>
 </html>
