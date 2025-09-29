@@ -56,6 +56,7 @@ function resolveSessionId() {
     window.history.replaceState({}, '', url.toString())
   }
   window.__UNIVER_SESSION_ID__ = sessionId
+  localStorage.setItem('univer-assistant-session', sessionId)
   return sessionId
 }
 

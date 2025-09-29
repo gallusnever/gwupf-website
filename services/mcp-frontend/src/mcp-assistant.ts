@@ -180,6 +180,15 @@ function createAssistantUI() {
     const MODEL_STORAGE_KEY = 'univer-assistant-model-choice'
     let selectedModel = localStorage.getItem(MODEL_STORAGE_KEY) || ''
     const MODEL_NAME_PLACEHOLDER = selectedModel || 'x-ai/grok-4-fast:free'
+const SESSION_STORAGE_KEY = 'univer-assistant-session'
+const PANEL_STORAGE_KEY = 'univer-assistant-panel-url'
+
+    const storedPanel = localStorage.getItem(PANEL_STORAGE_KEY)
+    if (storedPanel && typeof storedPanel === 'string') {
+        PANEL_ORIGIN_RAW = storedPanel
+        PANEL_ORIGIN = PANEL_ORIGIN_RAW.replace(/\/\/\$/, '')
+        CHAT_ENDPOINT = `${PANEL_ORIGIN}/api/chat`
+    }
 
     const messages: Array<{ role: string; content: string; tool_call_id?: string; name?: string; tool_calls?: any }> = []
 
@@ -201,6 +210,13 @@ function createAssistantUI() {
         if (!trimmed) return
         selectedModel = trimmed
         localStorage.setItem(MODEL_STORAGE_KEY, selectedModel)
+        if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+            localStorage.setItem(PANEL_STORAGE_KEY, trimmed)
+            PANEL_ORIGIN_RAW = trimmed
+            PANEL_ORIGIN = PANEL_ORIGIN_RAW.replace(/\/\/\$/, '')
+            CHAT_ENDPOINT = `${PANEL_ORIGIN}/api/chat`
+            return
+        }
         if (modelInput && modelInput.value.trim() !== trimmed) {
             modelInput.value = trimmed
         }
@@ -246,14 +262,20 @@ function createAssistantUI() {
 
     modelInput.addEventListener('change', () => {
         const value = modelInput.value.trim()
-        if (value) {
-            setModel(value)
-            const exists = Array.from(modelList.options).some((opt) => opt.value === value)
-            if (!exists) {
-                const option = document.createElement('option')
-                option.value = value
-                modelList.appendChild(option)
-            }
+        if (!value) return
+        if (value.startsWith('http://') || value.startsWith('https://')) {
+            localStorage.setItem(PANEL_STORAGE_KEY, value)
+            PANEL_ORIGIN_RAW = value
+            PANEL_ORIGIN = PANEL_ORIGIN_RAW.replace(/\/\/\$/, '')
+            CHAT_ENDPOINT = `${PANEL_ORIGIN}/api/chat`
+            return
+        }
+        setModel(value)
+        const exists = Array.from(modelList.options).some((opt) => opt.value === value)
+        if (!exists) {
+            const option = document.createElement('option')
+            option.value = value
+            modelList.appendChild(option)
         }
     })
 
@@ -261,22 +283,43 @@ function createAssistantUI() {
         if (event.key === 'Enter') {
             event.preventDefault()
             const value = modelInput.value.trim()
-            if (value) {
-                setModel(value)
-                const exists = Array.from(modelList.options).some((opt) => opt.value === value)
-                if (!exists) {
-                    const option = document.createElement('option')
-                    option.value = value
-                    modelList.appendChild(option)
-                }
-                form.dispatchEvent(new Event('submit'))
+            if (!value) return
+            if (value.startsWith('http://') || value.startsWith('https://')) {
+                localStorage.setItem(PANEL_STORAGE_KEY, value)
+                PANEL_ORIGIN_RAW = value
+                PANEL_ORIGIN = PANEL_ORIGIN_RAW.replace(/\/\/\$/, '')
+                CHAT_ENDPOINT = `${PANEL_ORIGIN}/api/chat`
+                window.location.reload()
+                return
             }
+            setModel(value)
+            const exists = Array.from(modelList.options).some((opt) => opt.value === value)
+            if (!exists) {
+                const option = document.createElement('option')
+                option.value = value
+                modelList.appendChild(option)
+            }
+            form.dispatchEvent(new Event('submit'))
         }
     })
 
     loadModels().catch(() => {
         setModel(selectedModel || MODEL_NAME_PLACEHOLDER)
     })
+
+    fetch('/env.json')
+        .then((r) => r.json())
+        .then((cfg) => {
+            if (cfg?.mcpProxy && typeof cfg.mcpProxy === 'string') {
+                PANEL_ORIGIN_RAW = cfg.mcpProxy
+                PANEL_ORIGIN = PANEL_ORIGIN_RAW.replace(/\/\/\$/, '')
+                CHAT_ENDPOINT = `${PANEL_ORIGIN}/api/chat`
+            }
+            if (cfg?.session && typeof cfg.session === 'string') {
+                localStorage.setItem(SESSION_STORAGE_KEY, cfg.session)
+            }
+        })
+        .catch(() => {})
 
     async function sendMessage(text: string) {
         const trimmed = text.trim()
