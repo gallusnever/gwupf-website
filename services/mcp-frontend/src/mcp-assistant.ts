@@ -209,7 +209,9 @@ function createAssistantUI() {
     async function loadModels() {
         try {
             const data = await fetch(`${PANEL_ORIGIN}/api/models`).then((r) => r.json())
-            const models: string[] = Array.isArray(data?.models) ? data.models.filter((m) => typeof m === 'string') : []
+            const models: string[] = Array.isArray(data?.models)
+                ? data.models.filter((m: unknown): m is string => typeof m === 'string')
+                : []
             modelList.innerHTML = ''
             for (const name of models) {
                 const option = document.createElement('option')

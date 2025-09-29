@@ -61,7 +61,7 @@ function resolveSessionId() {
 
 export function setupUniver() {
   const universerEndpoint = window.location.host
-  const sessionId = resolveSessionId()
+  resolveSessionId()
 
   const collaboration = undefined
 
