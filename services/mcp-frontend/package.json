@@ -1,0 +1,39 @@
+{
+  "name": "univer-mcp-start-kit",
+  "type": "module",
+  "version": "0.10.8",
+  "private": true,
+  "description": "A Model Context Protocol (MCP) server starter kit for Univer.",
+  "scripts": {
+    "prepare": "simple-git-hooks",
+    "dev": "vite --host",
+    "build": "tsc && vite build",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "@univerjs-pro/mcp": "0.10.8",
+    "@univerjs-pro/mcp-ui": "0.10.8",
+    "@univerjs-pro/sheets-mcp": "0.10.8",
+    "@univerjs/presets": "0.10.8",
+    "@univerjs/sheets-crosshair-highlight": "0.10.8",
+    "@univerjs/sheets-zen-editor": "0.10.8"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "4.14.1",
+    "@univerjs/vite-plugin": "^0.5.1",
+    "eslint": "^9.28.0",
+    "eslint-plugin-format": "^1.0.1",
+    "jiti": "^2.5.1",
+    "lint-staged": "^16.1.0",
+    "simple-git-hooks": "^2.13.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*": "eslint --fix"
+  }
+}

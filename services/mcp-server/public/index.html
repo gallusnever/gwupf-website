@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Univer MCP – Local Panel</title>
+  <style>
+    :root { font-family: -apple-system, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+    body { margin: 0; display: grid; grid-template-columns: 360px 1fr; height: 100vh; }
+    aside { border-right: 1px solid #eee; padding: 16px; overflow: auto; }
+    main { padding: 16px; overflow: auto; }
+    h1 { font-size: 18px; margin: 0 0 12px; }
+    button { cursor: pointer; }
+    .row { margin: 8px 0; display: grid; gap: 8px; }
+    select, input, textarea { width: 100%; font-family: inherit; font-size: 14px; }
+    textarea { min-height: 120px; }
+    pre { background: #f8f8f8; padding: 12px; border: 1px solid #eee; overflow: auto; }
+    .muted { color: #666; font-size: 12px; }
+    .tool-desc { font-size: 12px; color: #333; }
+  </style>
+</head>
+<body>
+  <aside>
+    <h1>Univer MCP – Local Panel</h1>
+
+    <div class="row">
+      <button id="btnList">List Tools</button>
+      <div id="session" class="muted"></div>
+    </div>
+
+    <div class="row">
+      <label>Tool</label>
+      <select id="toolSelect"></select>
+      <div id="toolDesc" class="tool-desc"></div>
+    </div>
+
+    <div class="row">
+      <label>Args (JSON)</label>
+      <textarea id="args">{}</textarea>
+    </div>
+
+    <div class="row">
+      <button id="btnCall">Call Tool</button>
+    </div>
+
+    <div class="row muted">
+      <div>Tips:</div>
+      <ul>
+        <li>Click “List Tools” to refresh from your running Univer session.</li>
+        <li>Pick a tool, inspect its inputSchema, then craft Args JSON.</li>
+        <li>Keep your <code>UNIVER_SESSION_ID</code> consistent with the sheet you have open.</li>
+      </ul>
+    </div>
+  </aside>
+
+  <main>
+    <h2>Output</h2>
+    <pre id="out">(nothing yet)</pre>
+    <h3>Last Tool Schema</h3>
+    <pre id="schema">(none)</pre>
+  </main>
+
+  <script>
+    const out = document.getElementById('out')
+    const schema = document.getElementById('schema')
+    const toolSelect = document.getElementById('toolSelect')
+    const toolDesc = document.getElementById('toolDesc')
+    const argsEl = document.getElementById('args')
+    const session = document.getElementById('session')
+
+    async function health() {
+      const r = await fetch('/api/health').then(r => r.json()).catch(() => ({}))
+      session.textContent = r?.ok ? `Session: ${r.session}  •  MCP: ${r.mcpBase}` : 'Health check failed'
+    }
+
+    async function listTools() {
+      out.textContent = 'Loading tools...'
+      schema.textContent = ''
+      toolSelect.innerHTML = ''
+      toolDesc.textContent = ''
+      try {
+        const r = await fetch('/api/list-tools', { method: 'POST' }).then(r => r.json())
+        const tools = r.tools || r.result?.tools || []
+        out.textContent = JSON.stringify(r, null, 2)
+        for (const t of tools) {
+          const opt = document.createElement('option')
+          opt.value = t.name
+          opt.textContent = t.name
+          toolSelect.appendChild(opt)
+        }
+        if (tools.length) {
+          toolSelect.value = tools[0].name
+          toolDesc.textContent = tools[0].description || ''
+          schema.textContent = JSON.stringify(tools[0].inputSchema || {}, null, 2)
+        } else {
+          toolDesc.textContent = 'No tools returned.'
+        }
+      } catch (e) {
+        out.textContent = 'Error: ' + e
+      }
+    }
+
+    toolSelect.addEventListener('change', () => {
+      try {
+        const r = JSON.parse(out.textContent)
+        const tools = r.tools || r.result?.tools || []
+        const t = tools.find(x => x.name === toolSelect.value)
+        toolDesc.textContent = t?.description || ''
+        schema.textContent = JSON.stringify(t?.inputSchema || {}, null, 2)
+      } catch { /* ignore */ }
+    })
+
+    async function callTool() {
+      out.textContent = 'Calling tool...'
+      try {
+        const name = toolSelect.value
+        let args = {}
+        const raw = argsEl.value.trim()
+        if (raw) args = JSON.parse(raw)
+        const r = await fetch('/api/call-tool', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ name, args })
+        }).then(r => r.json())
+        out.textContent = JSON.stringify(r, null, 2)
+      } catch (e) {
+        out.textContent = 'Error: ' + e
+      }
+    }
+
+    document.getElementById('btnList').addEventListener('click', listTools)
+    document.getElementById('btnCall').addEventListener('click', callTool)
+
+    health()
+    // Auto-load on boot
+    listTools().catch(()=>{})
+  </script>
+</body>
+</html>
